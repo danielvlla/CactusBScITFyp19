@@ -27,25 +27,25 @@ body {
     border-bottom: 2px solid darken($blue, 10%);
     box-sizing: border-box;
     padding-top: 3px;
-    #back
+    #backBtn
     {
         @extend .common-buttons;
     }
-    #forward
+    #forwardBtn
     {
         @extend .common-buttons;
     }
-    #refresh
+    #refreshBtn
     {
         @extend .common-buttons;
     }
-    #fave {
+    #faveBtn {
         @extend .common-buttons;
     }
-    #list {
+    #listBtn {
         @extend .common-buttons;
     }
-    #omnibox
+    #omniboxBtn
     {
         float: left;
         display: block;
@@ -63,10 +63,6 @@ body {
             font-family: monospace;
             margin-top: -1px;
         }
-    }
-    #console
-    {
-        @extend .common-buttons;
     }
     #fave-popup
     {
