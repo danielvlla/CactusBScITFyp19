@@ -1,5 +1,12 @@
 @import '_reset.scss';
 @import '_vars.scss';
-@import '_nav.scss';
 @import '_tabs.scss';
 @import '_webview.scss';
+@import '_btn.scss';
+@import '_nav.scss';
+
+body {
+  height: 100%;
+  display: block;
+}
+

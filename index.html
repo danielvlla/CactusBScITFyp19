@@ -3,35 +3,30 @@
   <head>
     <meta charset="UTF-8">
     <title>Browser</title>
-    <link rel="stylesheet" href="css/css/font-awesome.css">
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body id="browser">
-    <nav id="navigation">
-      <div id="backBtn">
-        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+    
+    <nav id="navbar">
+      <div id="backOrForwardBtn">
+        <div id="backBtn">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        </div>
+        <div id="forwardBtn">
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </div>
       </div>
-      <div id="forwardBtn">
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-      </div>
-      <div id="refreshBtn">
-        <i class="fa fa-refresh" aria-hidden="true"></i>
-      </div>
-      <div id="omniboxBtn">
+      <div id="omnibox">
         <input type="text" id="url">
       </div>
-      <div id="faveBtn">
-        <i class="fa fa-star" aria-hidden="true"></i>
-      </div>
-      <div id="fave-popup" data-state="closed">
-      </div>
-      <div id="listBtn">
-        <i class="fa fa-list" aria-hidden="true"></i>
+      <div id="menuBtn">
+        <i class="fas fa-bars"></i>
       </div>
     </nav>
-      <div id="viewsBtn">
-        <webview id="view" class="page" src="http://www.google.com/" autosize="on"></webview>
-      </div>
+
+    <div id="views">
+      <webview id="webview" class="page" src="http://www.google.com/" autosize="on"></webview>
+    </div>
   
   <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
   <script>
