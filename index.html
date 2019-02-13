@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Browser</title>
+    <link rel="stylesheet" href="css/css/font-awesome.css">
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body id="browser">
+    <nav id="navigation">
+      <div id="back">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      </div>
+      <div id="forward">
+        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </div>
+      <div id="refresh">
+        <i class="fa fa-refresh" aria-hidden="true"></i>
+      </div>
+      <div id="omnibox">
+        <input type="text" id="url">
+      </div>
+      <div id="fave">
+        <i class="fa fa-star" aria-hidden="true"></i>
+      </div>
+      <div id="fave-popup" data-state="closed">
+      </div>
+      <div id="list">
+        <i class="fa fa-list" aria-hidden="true"></i>
+      </div>
+      <div id="console">
+        <i class="fa fa-terminal" aria-hidden="true"></i>
+      </div>
+    </nav>
+      <div id="views">
+        <webview id="view" class="page" src="http://www.google.com/" autosize="on"></webview>
+      </div>
+  
+  <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
+  <script>
+    require('./renderer.js')
+  </script>
+</html>
