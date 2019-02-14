@@ -1,7 +1,7 @@
 #navbar {
   display: flex;
   width: 100%;
-  height: 80px;
+  height: 90px;
   background: $white;
   top: 0;
   left: 0;
@@ -10,7 +10,10 @@
 
   #backOrForwardBtn {
     display: flex;
-    width: 10%;
+    border: 15px solid $white;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 15%;
     align-items: center;
     justify-content: center;
 
@@ -24,12 +27,15 @@
   }
 
   #menuBtn  {
-    width: 10%;
     display: flex;
+    color: $bluegrey;
+    border: 15px solid $white;
+    border-radius: 25px;
+    font-size: 20px;
+    cursor: pointer;
+    width: 15%;
     align-items: center;
     justify-content: center;
-    @extend .navbtn;
-    
   }
 
   #omnibox  {

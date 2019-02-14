@@ -82,11 +82,6 @@ function handleUrl (event) {
   }
 }
 
-// Adds bookmark URL to omnibar
-function updateNav (event) {  
-  omni.value = webView.src;
-}
-
 // =================================
 // BASIC BROWSER FUNCTIONALITY 
 // =================================
@@ -103,11 +98,24 @@ function goForward() {
   webView.goForward();
 }
 
+function updateOmnibox (event) {    
+  const loadStart = () => {
+    omni.value = 'Loading...';
+  }
+
+  const loadStop = () => {
+    omni.value = webView.src;
+  }
+
+  webView.addEventListener('did-start-loading', loadStart)
+  webView.addEventListener('did-stop-loading', loadStop)
+}
+
 back.addEventListener('click', goBack);  
 forward.addEventListener('click', goForward);  
 omni.addEventListener('keydown', updateURL);  
 list.addEventListener('click', openPopUp);  
-webView.addEventListener('did-finish-load', updateNav);
+webView.addEventListener('did-start-loading', updateOmnibox);
 
 // =================================
 // DWELL 
