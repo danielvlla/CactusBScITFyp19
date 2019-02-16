@@ -99,12 +99,20 @@ function goForward() {
 }
 
 function updateOmnibox (event) {    
+  var loader = byId('loader');
+  var favicon = byId('favicon');
+
   const loadStart = () => {
-    omni.value = 'Loading...';
+    favicon.style.display="none";
+    loader.style.display = "block";
+    omni.value = 'Loading..';
   }
 
   const loadStop = () => {
-    omni.value = webView.src;
+    favicon.style.display="block"
+    loader.style.display = "none";
+    omni.value = webView.getTitle();
+    // omni.value = webView.src;
   }
 
   webView.addEventListener('did-start-loading', loadStart)
