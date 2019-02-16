@@ -29,10 +29,20 @@
     </nav>
 
     <div id="views">
-      <div id="button-overlay-nav"><div>
-      <div id="button-overlay-omnibox"><div>
-      <div id="button-overlay-options"><div>
-      <webview id="webview" class="page" src="http://www.google.com/" autosize="on"></webview>
+      <div id="overlay-nav">
+        <div id="goBackBtn"></div>
+        <div id="goForwardBtn"></div>
+      </div>
+      <div id="overlay-omnibox">
+        <div id="bookmarkPageBtn"></div>
+        <div id="refreshPageBtn"></div>
+        <div id="newUrlBtn"></div>
+        <div id="searchBtn"></div>
+        <div id="tabsBtn"></div>
+        <div id="closeBtn"></div>
+      </div>
+      <div id="overlay-cancel"></div>
+      <webview id="webview" class="webpage" src="http://www.google.com/" autosize="on"></webview>
     </div>
   
   <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
