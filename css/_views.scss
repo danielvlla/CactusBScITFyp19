@@ -13,11 +13,70 @@
 }
 
 #overlay-nav {
-  display: block; // set to none
+  display: grid; // set to none
   position: absolute;
   width: 100%;
   height: calc(100vh - 90px);
-  background-color: $lightgrey;
   opacity: 0.4;
-  z-index: 99;
+  z-index: 2;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+  'back forward'
+  'back forward'
+  'back forward'
+  'cancel cancel';
+
+  #goBackBtn {
+    grid-area: back;
+  }
+
+  #goForwardBtn {
+    grid-area: forward;
+  }
+
+  .cancelBtn {
+    grid-area: cancel;
+    background-color: $lightred;
+    color: $red;
+  }
 }
+
+.overlayBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: -18px 23px 76px -26px $lightgrey;
+  border-radius: 20px;
+  margin: 3px;
+  cursor: pointer;
+  outline: none;
+  background-color: $offwhite;
+  color: $blue;
+  transform: translate3d(0,0,0);
+  position: relative;
+  overflow: hidden;
+}
+
+.overlayBtn:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, $white 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10,10);
+  opacity: 0;
+  transition: transform .5s, opacity 1s;
+}
+
+.overlayBtn:hover:after {
+  transform: scale(0,0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
