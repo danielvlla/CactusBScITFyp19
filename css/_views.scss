@@ -12,13 +12,16 @@
   height: 100vh;
 }
 
-#overlay-nav {
-  display: grid; // set to none
+.overlay {
+  display: none; 
   position: absolute;
   width: 100%;
   height: calc(100vh - 90px);
   opacity: 0.4;
   z-index: 2;
+}
+
+#overlay-nav {
   grid-template-columns: repeat(2, 1fr);
   grid-template-areas:
   'back forward'
@@ -33,12 +36,44 @@
   #goForwardBtn {
     grid-area: forward;
   }
+}
 
-  .cancelBtn {
-    grid-area: cancel;
-    background-color: $lightred;
-    color: $red;
+#overlay-omnibox {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+  'bookmark refresh search'
+  'url tabs close'
+  'cancel cancel cancel';
+
+  #bookmarkPageBtn {
+    grid-area: bookmark;
   }
+
+  #refreshPageBtn {
+    grid-area: refresh;
+  }
+
+  #searchBtn {
+    grid-area: search;
+  }
+
+  #newUrlBtn {
+    grid-area: url;
+  }
+
+  #tabsBtn {
+    grid-area: tabs;
+  }
+
+  #closeBtn {
+    grid-area: close;
+  }
+}
+
+.overlay .cancelBtn {
+  grid-area: cancel;
+  background-color: $lightred;
+  color: $red;
 }
 
 .overlayBtn {

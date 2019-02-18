@@ -3,21 +3,26 @@ var path          = require('path');
 var uuid          = require('uuid');
 var bookmarks     = path.join(__dirname, 'bookmarks.json');
 
+var back, forward, backOrForward, omni, omnibox, webView, cancelNavBtn, backNavBtn, forwardNavBtn,
+overlayNav, overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
+tabsOmniBtn, closeOmniBtn, cancelOmniBtn
+
 var byId = (id) => {
   return document.getElementById(id);
 }
 
-var back = byId('backBtn'),
-    forward = byId('forwardBtn'),
-    backOrForward = byId('backOrForwardBtn'),
-    omni = byId('url'),
-    list = byId('menuBtn'),
-    webView = byId('webview');
+back = byId('backBtn')
+forward = byId('forwardBtn')
+omni = byId('url')
+webView = byId('webview')
 
-// =================================
-// URL Omnibox
-// =================================
-function updateURL (event) {  
+back.addEventListener('click', goBack);  
+forward.addEventListener('click', goForward);
+omni.addEventListener('keydown', sanitiseUrl);  
+webView.addEventListener('did-start-loading', updateOmnibox);
+
+// Sanitises URL
+function sanitiseUrl (event) {  
   if (event.keyCode === 13) {
       omni.blur();
       let val = omni.value;
@@ -34,73 +39,26 @@ function updateURL (event) {
 }
 
 // =================================
-// BOOKMARKS
+// BROWSER FUNCTIONALITY 
 // =================================
-
-function addBookmark () {  
-  let url = webView.src;
-  let title = webView.getTitle();
-  let bookmark = { id: uuid.v1(), url: url, title: title };
-  jsonfile.writeFile(bookmarks, bookmark, { flag: 'a'}, function(err) {
-    if (err) console.error(err)
-  }) 
-};
-
-function openPopUp (event) {  
-  let state = popup.getAttribute('data-state');
-  if (state === 'closed') {
-      popup.innerHTML = '';
-      jsonfile.readFile(bookmarks, function(err, obj) {
-          if(obj.length !== 0) {
-              for (var i = 0; i < obj.length; i++) {
-                  let url = obj[i].url;
-                  let icon = obj[i].icon;
-                  let id = obj[i].id;
-                  let title = obj[i].title;
-                  let bookmark = new Bookmark(id, url, icon, title);
-                  let el = bookmark.ELEMENT();
-                  popup.appendChild(el);
-              }
-          }
-              popup.style.display = 'block';
-              popup.setAttribute('data-state', 'open');
-      });
-  } else {
-      popup.style.display = 'none';
-      popup.setAttribute('data-state', 'closed');
-  }
-}
-
-// Loads Bookmarked URL in the webview
-function handleUrl (event) {  
-  if (event.target.className === 'link') {
-      event.preventDefault();
-      webView.loadURL(event.target.href);
-  } else if (event.target.className === 'favicon') {
-      event.preventDefault();
-      webView.loadURL(event.target.parentElement.href);
-  }
-}
-
-// =================================
-// BASIC BROWSER FUNCTIONALITY 
-// =================================
-
-function reloadView() {
+function reload() {
+  hideAllOverlays()
   webView.reload();
 }
 
 function goBack() {
+  hideAllOverlays()
   webView.goBack();
 }
 
 function goForward() {
+  hideAllOverlays()
   webView.goForward();
 }
 
 function updateOmnibox (event) {    
-  var loader = byId('loader');
-  var favicon = byId('favicon');
+  let loader = byId('loader');
+  let favicon = byId('favicon');
 
   const loadStart = () => {
     favicon.style.display="none";
@@ -119,27 +77,65 @@ function updateOmnibox (event) {
   webView.addEventListener('did-stop-loading', loadStop)
 }
 
-back.addEventListener('click', goBack);  
-forward.addEventListener('click', goForward);  
-omni.addEventListener('keydown', updateURL);  
-list.addEventListener('click', openPopUp);  
-webView.addEventListener('did-start-loading', updateOmnibox);
+// ============= DWELL =============
 
-// =================================
-// DWELL 
-// =================================
-
-var dwell = function (elem, callback) {
-  var timeout = null;
-  elem.onmouseover = function () {
-    timeout = setTimeout(callback, 1000);
+var dwell = (elem, callback) => {
+  let timeout = null
+  elem.onmouseover = () => {
+    timeout = setTimeout(callback, 800)
   };
 
-  elem.onmouseout = function() {
-    clearTimeout(timeout);
+  elem.onmouseout = () => {
+    clearTimeout(timeout)
   }
 };
 
-dwell(backOrForward, function() {
-  back.click();
+// ======== HIDE ALL OVERLAYS ========
+
+function hideAllOverlays() {
+  overlayNav = byId('overlay-nav')
+  overlayNav.style.display = 'none'
+  overlayOmnibox = byId('overlay-omnibox')
+  overlayOmnibox.style.display = 'none'
+}
+
+// ======== NAVIGATION OVERLAY ========
+
+backOrForward = byId('backOrForwardBtn')
+cancelNavBtn = byId('cancel-nav')
+backNavBtn = byId('goBackBtn')
+forwardNavBtn = byId('goForwardBtn')
+
+dwell(backOrForward, () => {
+  hideAllOverlays()
+  overlayNav = byId('overlay-nav')
+  overlayNav.style.display = 'grid'
 })
+
+dwell(cancelNavBtn, () => {
+  overlayNav.style.display = 'none'
+})
+
+dwell(backNavBtn, goBack)
+
+dwell(forwardNavBtn, goForward)
+
+// ======== OMNIBOX OVERLAY ========
+omnibox = byId('omnibox')
+refreshOmniBtn = byId('refreshPageBtn')
+cancelOmniBtn = byId('cancel-omni')
+
+dwell(omnibox, () => {
+  hideAllOverlays()
+  overlayOmnibox = byId('overlay-omnibox')
+  overlayOmnibox.style.display = 'grid'
+})
+
+dwell(refreshOmniBtn, reload)
+
+dwell(cancelOmniBtn, () => {
+  overlayOmnibox.style.display = 'none'
+})
+
+// refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
+// tabsOmniBtn, closeOmniBtn, cancelOmniBtn

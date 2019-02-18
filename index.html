@@ -29,33 +29,50 @@
     </nav>
 
     <div id="views">
-      <div id="overlay-nav">
+      <div id="overlay-nav" class="overlay">
         <div id="goBackBtn" class="overlayBtn">
           <i class="fa fa-arrow-left fa-10x"></i>
         </div>
         <div id="goForwardBtn" class="overlayBtn">
           <i class="fa fa-arrow-right fa-10x"></i>
         </div>
-        <div class="cancelBtn overlayBtn">
+        <div id="cancel-nav" class="cancelBtn overlayBtn">
           <i class="fas fa-times fa-6x"></i>
         </div>
       </div>
-      <div id="overlay-omnibox">
-        <div id="bookmarkPageBtn"></div>
-        <div id="refreshPageBtn"></div>
-        <div id="newUrlBtn"></div>
-        <div id="searchBtn"></div>
-        <div id="tabsBtn"></div>
-        <div id="closeBtn"></div>
-        <div class="cancelBtn"></div>
+
+      <div id="overlay-omnibox" class="overlay">
+        <div id="bookmarkPageBtn" class="overlayBtn">
+          <i class="fas fa-star fa-10x"></i>
+        </div>
+        <div id="refreshPageBtn" class="overlayBtn">
+          <i class="fas fa-redo fa-10x"></i>
+        </div>
+        <div id="searchBtn" class="overlayBtn">
+          <i class="fab fa-google fa-10x"></i>
+        </div>
+        <div id="newUrlBtn" class="overlayBtn">
+          <i class="fas fa-link fa-10x"></i>
+        </div>
+        <div id="tabsBtn" class="overlayBtn">
+          <i class="fas fa-table fa-10x"></i>
+        </div>
+        <div id="closeBtn" class="overlayBtn">
+          <i class="far fa-window-close fa-10x"></i>
+        </div>
+        <div id="cancel-omni" class="cancelBtn overlayBtn">
+          <i class="fas fa-times fa-6x"></i>
+        </div>
       </div>
-      <div id="overlay-options">
+
+      <div id="overlay-options" class="overlay">
         <div id="openBookmarksBtn"></div>
         <div id="zoomInBtn"></div>
         <div id="zoomOutBtn"></div>
         <div id="aboutBtn"></div>
         <div class="cancelBtn"></div>
       </div>
+      
       <webview id="webview" class="webpage" src="http://www.google.com/" autosize="on"></webview>
     </div>
   
