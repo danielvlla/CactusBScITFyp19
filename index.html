@@ -66,13 +66,23 @@
       </div>
 
       <div id="overlay-options" class="overlay">
-        <div id="openBookmarksBtn"></div>
-        <div id="zoomInBtn"></div>
-        <div id="zoomOutBtn"></div>
-        <div id="aboutBtn"></div>
-        <div class="cancelBtn"></div>
+        <div id="openBookmarksBtn" class="overlayBtn">
+          <i class="fas fa-bookmark fa-10x"></i>  
+        </div>
+        <div id="aboutBtn" class="overlayBtn">
+          <i class="fas fa-info fa-10x"></i>
+        </div>
+        <div id="zoomInBtn" class="overlayBtn">
+          <i class="fas fa-search-plus fa-10x"></i>
+        </div>
+        <div id="zoomOutBtn" class="overlayBtn">
+          <i class="fas fa-search-minus fa-10x"></i>
+        </div>
+        <div id='cancel-options' class="cancelBtn overlayBtn">
+          <i class="fas fa-times fa-6x"></i>
+        </div>
       </div>
-      
+
       <webview id="webview" class="webpage" src="http://www.google.com/" autosize="on"></webview>
     </div>
   

@@ -3,9 +3,11 @@ var path          = require('path');
 var uuid          = require('uuid');
 var bookmarks     = path.join(__dirname, 'bookmarks.json');
 
-var back, forward, backOrForward, omni, omnibox, webView, cancelNavBtn, backNavBtn, forwardNavBtn,
-overlayNav, overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
-tabsOmniBtn, closeOmniBtn, cancelOmniBtn
+var back, forward, backOrForward, omni, omnibox, webView;
+var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav; 
+var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
+tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
+var overlayOptions, bookmarksBtn, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
 
 var byId = (id) => {
   return document.getElementById(id);
@@ -97,6 +99,8 @@ function hideAllOverlays() {
   overlayNav.style.display = 'none'
   overlayOmnibox = byId('overlay-omnibox')
   overlayOmnibox.style.display = 'none'
+  overlayOptions = byId('overlay-options')
+  overlayOptions.style.display = 'none'
 }
 
 // ======== NAVIGATION OVERLAY ========
@@ -137,5 +141,18 @@ dwell(cancelOmniBtn, () => {
   overlayOmnibox.style.display = 'none'
 })
 
-// refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
-// tabsOmniBtn, closeOmniBtn, cancelOmniBtn
+// ======== OPTIONS OVERLAY ========
+options = byId('menuBtn')
+cancelOptionsBtn = byId('cancel-options')
+
+dwell(options, () => {
+  hideAllOverlays()
+  overlayOptions = byId('overlay-options')
+  overlayOptions.style.display = 'grid'
+})
+
+dwell(cancelOptionsBtn, () => {
+  overlayOptions.style.display = 'none'
+})
+
+// overlayOptions, bookmarksBtn, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn

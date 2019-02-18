@@ -70,6 +70,31 @@
   }
 }
 
+
+#overlay-options {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+  'bookmarks about'
+  'zoomIn zoomOut'
+  'cancel cancel';
+
+  #openBookmarksBtn {
+    grid-area: bookmarks;
+  }
+
+  #aboutBtn {
+    grid-area: about;
+  }
+
+  #zoomInBtn {
+    grid-area: zoomIn;
+  }
+
+  #zoomOutBtn {
+    grid-area: zoomOut;
+  }
+}
+
 .overlay .cancelBtn {
   grid-area: cancel;
   background-color: $lightred;
