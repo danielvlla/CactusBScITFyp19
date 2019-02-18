@@ -1,3 +1,21 @@
 .is-visible {
   display: block;
 }
+
+@keyframes fadeInUp {
+  from {
+    transform: translate3d(0, 40px, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+.fadeInUp {
+  animation-duration: 0.6s;
+  animation-fill-mode: both;
+  opacity: 0;
+  animation-name: fadeInUp;
+}

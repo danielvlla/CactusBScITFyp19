@@ -3,9 +3,13 @@
 @import '_views.scss';
 @import '_misc.scss';
 @import '_nav.scss';
+@import '_overlays.scss';
 
 body {
   height: 100%;
   display: block;
 }
 
+::placeholder {
+  color: $blue;
+}

@@ -81,10 +81,12 @@ function updateOmnibox (event) {
 
 // ============= DWELL =============
 
+let dwellTime = 800;
+
 var dwell = (elem, callback) => {
   let timeout = null
   elem.onmouseover = () => {
-    timeout = setTimeout(callback, 800)
+    timeout = setTimeout(callback, dwellTime)
   };
 
   elem.onmouseout = () => {
@@ -154,5 +156,3 @@ dwell(options, () => {
 dwell(cancelOptionsBtn, () => {
   overlayOptions.style.display = 'none'
 })
-
-// overlayOptions, bookmarksBtn, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn
