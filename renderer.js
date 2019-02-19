@@ -1,14 +1,12 @@
-var jsonfile      = require('jsonfile');
-var path          = require('path');
-var uuid          = require('uuid');
-var bookmarks     = path.join(__dirname, 'bookmarks.json');
-
 var back, forward, backOrForward, omni, omnibox, webView;
+
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav; 
-var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
-tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
+
+var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
+
 var overlayOptions, bookmarksBtn, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
-var scrollUp, scrollDown;
+
+var scrollUpBtn, scrollDownBtn;
 
 var byId = (id) => {
   return document.getElementById(id);
@@ -21,7 +19,8 @@ webView = byId('webview')
 
 back.addEventListener('click', goBack);  
 forward.addEventListener('click', goForward);
-omni.addEventListener('keydown', sanitiseUrl);  
+omni.addEventListener('keydown', sanitiseUrl); 
+omni.addEventListener('click', displayUrl); 
 webView.addEventListener('did-start-loading', updateOmnibox);
 
 // Sanitises URL
@@ -78,6 +77,10 @@ function updateOmnibox (event) {
 
   webView.addEventListener('did-start-loading', loadStart)
   webView.addEventListener('did-stop-loading', loadStop)
+}
+
+function displayUrl() {
+  omni.value = webView.src;
 }
 
 // ============= DWELL =============
@@ -179,9 +182,12 @@ dwell(cancelOptionsBtn, () => {
 })
 
 // ======== SCROLLING ========
-scrollUp = byId('scroll-up')
-scrollDown = byId('scroll-down')
+scrollUpBtn = byId('scroll-up')
+scrollDownBtn = byId('scroll-down')
 
-dwell(scrollUp, () => {
-  webView.executeJavaScript('document.querySelector("body").scrollTop=100')
-})
+scrollUpBtn.addEventListener('click', scrollUp);  
+
+function scrollUp() {
+  console.log("a")
+  webView.executeJavaScript("document.querySelector('body').scrollTop=100;");
+}
