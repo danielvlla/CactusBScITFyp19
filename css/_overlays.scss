@@ -4,7 +4,7 @@
   width: 100%;
   height: calc(100vh - 90px);
   opacity: 0.7;
-  z-index: 2;
+  z-index: 3;
 }
 
 #overlay-nav {
@@ -18,6 +18,32 @@
   #goBackBtn {
     grid-area: back;
   }
+
+  #goForwardBtn {
+    grid-area: forward;
+  }
+}
+
+#overlay-nav-back-only {
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-areas:
+  'back'
+  'back'
+  'back'
+  'cancel';
+
+  #goBackBtn {
+    grid-area: back;
+  }
+}
+
+#overlay-nav-forward-only {
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-areas:
+  'forward'
+  'forward'
+  'forward'
+  'cancel';
 
   #goForwardBtn {
     grid-area: forward;
@@ -92,7 +118,7 @@
   outline: none;
   overflow: hidden;
   position: relative;
-  z-index: 3;
+  z-index: 4;
 
   background-color: $offwhite;
   color: $blue;
@@ -162,4 +188,33 @@ div .cancelBtn {
       transform: scale(0);
     }
   }
+}
+
+.scrollBtn {
+  padding: 20px;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+  background-color: transparent;
+  z-index: 3;
+
+  color: $lightblue;
+  transition: $dwellTime/2;
+
+  &:hover {
+    color: $darkblue;
+  }
+}
+
+#scroll-up {
+  position: fixed;
+  top: 95px;
+  right: 30px;
+}
+
+#scroll-down {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
 }

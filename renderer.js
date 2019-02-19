@@ -8,6 +8,7 @@ var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
 var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, 
 tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
 var overlayOptions, bookmarksBtn, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
+var scrollUp, scrollDown;
 
 var byId = (id) => {
   return document.getElementById(id);
@@ -97,7 +98,6 @@ var dwell = (elem, callback) => {
 // ======== HIDE ALL OVERLAYS ========
 
 function hideAllOverlays() {
-  overlayNav = byId('overlay-nav')
   overlayNav.style.display = 'none'
   overlayOmnibox = byId('overlay-omnibox')
   overlayOmnibox.style.display = 'none'
@@ -111,10 +111,31 @@ backOrForward = byId('backOrForwardBtn')
 cancelNavBtn = byId('cancel-nav')
 backNavBtn = byId('goBackBtn')
 forwardNavBtn = byId('goForwardBtn')
+overlayNav = byId('overlay-nav')
 
 dwell(backOrForward, () => {
   hideAllOverlays()
-  overlayNav = byId('overlay-nav')
+  
+  if(!webView.canGoBack() && webView.canGoForward()) {
+    overlayNav.id = 'overlay-nav-forward-only'
+    backNavBtn.style.display = 'none'
+    forwardNavBtn.style.display = 'flex'
+    overlayNav = byId('overlay-nav-forward-only')
+  } else if (!webView.canGoForward() && webView.canGoBack()) {
+    overlayNav.id = 'overlay-nav-back-only'
+    backNavBtn.style.display = 'flex'
+    forwardNavBtn.style.display = 'none'
+    overlayNav = byId('overlay-nav-back-only')
+  } else if (webView.canGoBack() && webView.canGoForward()) {
+    overlayNav.id = 'overlay-nav'
+    backNavBtn.style.display = 'flex'
+    forwardNavBtn.style.display = 'flex'
+    overlayNav = byId('overlay-nav')
+  } else {
+    backNavBtn.style.display = 'none'
+    forwardNavBtn.style.display = 'none'
+  }
+
   overlayNav.style.display = 'grid'
 })
 
@@ -155,4 +176,12 @@ dwell(options, () => {
 
 dwell(cancelOptionsBtn, () => {
   overlayOptions.style.display = 'none'
+})
+
+// ======== SCROLLING ========
+scrollUp = byId('scroll-up')
+scrollDown = byId('scroll-down')
+
+dwell(scrollUp, () => {
+  webView.executeJavaScript('document.querySelector("body").scrollTop=100')
 })
