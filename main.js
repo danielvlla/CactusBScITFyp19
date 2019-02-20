@@ -1,16 +1,16 @@
-const { app, BrowserView, BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron')
 
-let win
+let mainWindow
 
 function createWindow () {
-  win = new BrowserWindow({ width: 800, height: 600, frame: false })
-  win.maximize();
+  mainWindow = new BrowserWindow({ width: 800, height: 600, frame: false })
+  mainWindow.maximize();
 
-  win.loadFile('index.html')
+  mainWindow.loadFile('index.html')
 
-  win.on('closed', () => {
+  mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element.
-    win = null
+    mainWindow = null
   })
 }
 
@@ -30,7 +30,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
-  if (win === null) {
+  if (mainWindow === null) {
     createWindow()
   }
 })

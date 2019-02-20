@@ -1,6 +1,6 @@
 var back, forward, backOrForward, omni, omnibox, webView;
 
-var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav; 
+var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
 
 var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
 
@@ -17,14 +17,14 @@ forward = byId('forwardBtn')
 omni = byId('url')
 webView = byId('webview')
 
-back.addEventListener('click', goBack);  
-forward.addEventListener('click', goForward);
-omni.addEventListener('keydown', sanitiseUrl); 
-omni.addEventListener('click', displayUrl); 
-webView.addEventListener('did-start-loading', updateOmnibox);
+back.onclick = goBack
+forward.onclick = goForward
+omni.addEventListener('keydown', sanitiseUrl)
+omni.onclick = displayUrl
+webView.addEventListener('did-start-loading', updateOmnibox)
 
 // Sanitises URL
-function sanitiseUrl (event) {  
+function sanitiseUrl (event) {
   if (event.keyCode === 13) {
       omni.blur();
       let val = omni.value;
@@ -41,7 +41,7 @@ function sanitiseUrl (event) {
 }
 
 // =================================
-// BROWSER FUNCTIONALITY 
+// BROWSER FUNCTIONALITY
 // =================================
 function reload() {
   hideAllOverlays()
@@ -58,7 +58,7 @@ function goForward() {
   webView.goForward();
 }
 
-function updateOmnibox (event) {    
+function updateOmnibox (event) {
   let loader = byId('loader');
   let favicon = byId('favicon');
 
@@ -118,7 +118,7 @@ overlayNav = byId('overlay-nav')
 
 dwell(backOrForward, () => {
   hideAllOverlays()
-  
+
   if(!webView.canGoBack() && webView.canGoForward()) {
     overlayNav.id = 'overlay-nav-forward-only'
     backNavBtn.style.display = 'none'
@@ -185,9 +185,32 @@ dwell(cancelOptionsBtn, () => {
 scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
 
-scrollUpBtn.addEventListener('click', scrollUp);  
+var timeoutSroll;
 
-function scrollUp() {
-  console.log("a")
-  webView.executeJavaScript("document.querySelector('body').scrollTop=100;");
-}
+webView.addEventListener('dom-ready', (e) => {
+
+  scrollUpBtn.onmouseover = (e) => {
+    timeoutScroll = setInterval(() => {
+      webView.executeJavaScript(window.scrollBy(0,-10));
+    }, 20)
+  }
+
+  scrollUpBtn.onmouseout = (e) => {
+    if (timeoutScroll) {
+      clearInterval(timeoutScroll)
+    }
+  }
+
+  scrollDownBtn.onmouseover = (e) => {
+    timeoutScroll = setInterval(() => {
+      webView.executeJavaScript(window.scrollBy(0,10));
+    }, 20)
+  }
+
+  scrollDownBtn.onmouseout = (e) => {
+    if (timeoutScroll) {
+      clearInterval(timeoutScroll)
+    }
+  }
+
+});

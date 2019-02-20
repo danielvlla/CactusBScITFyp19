@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body id="browser">
-    
+
     <nav id="navbar">
 
       <div id="backOrForwardBtn">
@@ -72,7 +72,7 @@
 
       <div id="overlay-options" class="overlay">
         <div id="openBookmarksBtn" class="overlayBtn fadeInUp">
-          <i class="fas fa-bookmark fa-8x"></i>  
+          <i class="fas fa-bookmark fa-8x"></i>
         </div>
         <div id="aboutBtn" class="overlayBtn fadeInUp">
           <i class="fas fa-info fa-8x"></i>
@@ -97,12 +97,13 @@
         </div>
       </div>
 
-      <webview id="webview" class="webpage" src="http://www.google.com/" autosize="on"></webview>
-      
+      <!-- <webview id="webview" class="webpage" src="http://www.google.com/" preload="./inject.js" autosize="on"></webview> -->
+      <webview id="webview" class="webpage" src="http://www.google.com/" preload="./inject.js" autosize="on"></webview>
+
     </div>
-  
+
   <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
   <script>
-    require('./renderer.js')
+    require('./render.js')
   </script>
 </html>
