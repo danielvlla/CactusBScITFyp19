@@ -4,7 +4,7 @@ var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
 
 var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
 
-var overlayOptions, bookmarksBtn, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
+var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
 
 var scrollUpBtn, scrollDownBtn;
 
@@ -16,6 +16,10 @@ back = byId('backBtn')
 forward = byId('forwardBtn')
 omni = byId('url')
 webView = byId('webview')
+
+// webView.addEventListener('dom-ready', () => {
+//   webView.openDevTools();
+// })
 
 back.onclick = goBack
 forward.onclick = goForward
@@ -85,7 +89,7 @@ function displayUrl() {
 
 // ============= DWELL =============
 
-let dwellTime = 800;
+let dwellTime = 1000;
 
 var dwell = (elem, callback) => {
   let timeout = null
@@ -109,7 +113,6 @@ function hideAllOverlays() {
 }
 
 // ======== NAVIGATION OVERLAY ========
-
 backOrForward = byId('backOrForwardBtn')
 cancelNavBtn = byId('cancel-nav')
 backNavBtn = byId('goBackBtn')
@@ -117,6 +120,7 @@ forwardNavBtn = byId('goForwardBtn')
 overlayNav = byId('overlay-nav')
 
 dwell(backOrForward, () => {
+
   hideAllOverlays()
 
   if(!webView.canGoBack() && webView.canGoForward()) {
@@ -124,22 +128,28 @@ dwell(backOrForward, () => {
     backNavBtn.style.display = 'none'
     forwardNavBtn.style.display = 'flex'
     overlayNav = byId('overlay-nav-forward-only')
+    overlayNav.style.display = 'grid'
   } else if (!webView.canGoForward() && webView.canGoBack()) {
     overlayNav.id = 'overlay-nav-back-only'
     backNavBtn.style.display = 'flex'
     forwardNavBtn.style.display = 'none'
     overlayNav = byId('overlay-nav-back-only')
+    overlayNav.style.display = 'grid'
   } else if (webView.canGoBack() && webView.canGoForward()) {
     overlayNav.id = 'overlay-nav'
     backNavBtn.style.display = 'flex'
     forwardNavBtn.style.display = 'flex'
     overlayNav = byId('overlay-nav')
+    overlayNav.style.display = 'grid'
   } else {
-    backNavBtn.style.display = 'none'
-    forwardNavBtn.style.display = 'none'
-  }
+    backOrForward.classList.add('shake')
 
-  overlayNav.style.display = 'grid'
+    backOrForward.addEventListener('webkitAnimationEnd', () => {
+      backOrForward.classList.remove('shake')
+    })
+
+    overlayNav.style.display = 'none'
+  }
 })
 
 dwell(cancelNavBtn, () => {
@@ -181,6 +191,18 @@ dwell(cancelOptionsBtn, () => {
   overlayOptions.style.display = 'none'
 })
 
+// zoomInBtn = byId('zoomInBtn')
+// zoomLevel = 150
+// dwell(zoomInBtn, () => {
+//   webView.executeJavaScript(`document.body.style.zoom = ${zoomLevel}%;`);
+// })
+//
+// zoomOutBtn = byId('zoomOutBtn')
+// dwell(zoomOutBtn, () => {
+//   webView.executeJavaScript('document.body.style.zoom = "'+ zoomLevel +'";');
+// })
+
+
 // ======== SCROLLING ========
 scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
@@ -191,7 +213,7 @@ webView.addEventListener('dom-ready', (e) => {
 
   scrollUpBtn.onmouseover = (e) => {
     timeoutScroll = setInterval(() => {
-      webView.executeJavaScript(window.scrollBy(0,-10));
+      webView.executeJavaScript('document.documentElement.scrollBy(0, -10)');
     }, 20)
   }
 
@@ -203,7 +225,7 @@ webView.addEventListener('dom-ready', (e) => {
 
   scrollDownBtn.onmouseover = (e) => {
     timeoutScroll = setInterval(() => {
-      webView.executeJavaScript(window.scrollBy(0,10));
+      webView.executeJavaScript('document.documentElement.scrollBy(0, 10)');
     }, 20)
   }
 
@@ -212,5 +234,4 @@ webView.addEventListener('dom-ready', (e) => {
       clearInterval(timeoutScroll)
     }
   }
-
 });

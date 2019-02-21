@@ -2,7 +2,44 @@
   color: $bluegrey;
   cursor: pointer;
   font-size: 20px;
-  margin: 10px;
+  border: 15px solid $white;
+  border-radius: 20px;
+  background-color: $lightblue;
+  width: 15%;
+  font-size: 20px;
+  transition: $dwellTime;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+
+  &:before {
+    content: '';
+    background: $darkblue;
+    width: 5em;
+    height: 5em;
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: {
+      left: (5em / -2);
+      top: (5em / -2);
+    }
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(1);
+    transition:
+      opacity $dwellTime cubic-bezier(0,0,.2,1),
+      transform $dwellTime cubic-bezier(0,0,.2,1);
+  }
+
+  &:hover {
+    color: $darkblue;
+    &:before {
+      opacity: 0.6;
+      transform: scale(0);
+    }
+  }
 }
 
 #navbar {
@@ -16,31 +53,23 @@
   box-sizing: border-box;
 
   #backOrForwardBtn {
+    @extend .navbtn;
     display: flex;
-    border: 15px solid $white;
-    border-radius: 25px;
-    cursor: pointer;
-    width: 15%;
     align-items: center;
     justify-content: center;
 
     #backBtn {
-      @extend .navbtn;
+      margin-right: 10px;
     }
-  
+
     #forwardBtn  {
-      @extend .navbtn;
+      margin-left: 10px;
     }
   }
 
   #menuBtn  {
+    @extend .navbtn;
     display: flex;
-    color: $bluegrey;
-    border: 15px solid $white;
-    border-radius: 25px;
-    font-size: 20px;
-    cursor: pointer;
-    width: 15%;
     align-items: center;
     justify-content: center;
   }
@@ -54,7 +83,7 @@
     color: $blue;
     background-color: $lightblue;
     margin: 15px;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
 
     #loader {
@@ -69,7 +98,7 @@
       margin-right: auto;
       margin-left: auto;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -89,7 +118,7 @@
       border-radius: 5px;
       font-size: 18px;
       color: $blue;
-      background-color : $lightblue; 
+      background-color : $lightblue;
       cursor: pointer;
     }
   }
