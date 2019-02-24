@@ -1,13 +1,8 @@
 var back, forward, backOrForward, omni, omnibox, webView;
-
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
-
 var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
-
 var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
-
 var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
-
 var scrollUpBtn, scrollDownBtn;
 
 var byId = (id) => {
@@ -76,8 +71,8 @@ function updateOmnibox (event) {
 
   const loadStop = () => {
     favicon.style.display="block"
-    loader.style.display = "none";
-    omni.value = webView.getTitle();
+    loader.style.display = "none"
+    omni.value = webView.getTitle()
     // omni.value = webView.src;
   }
 
@@ -238,7 +233,6 @@ scrollDownBtn = byId('scroll-down')
 var timeoutSroll;
 
 webView.addEventListener('dom-ready', (e) => {
-
   scrollUpBtn.onmouseover = (e) => {
     timeoutScroll = setInterval(() => {
       webView.executeJavaScript('document.documentElement.scrollBy(0, -10)');
@@ -263,3 +257,10 @@ webView.addEventListener('dom-ready', (e) => {
     }
   }
 });
+
+webview.addEventListener('dom-ready', () => {
+  webView.send('getLinks')
+  webView.addEventListener('ipc-message', (e) => {
+    console.log(e.channel)
+  })
+})

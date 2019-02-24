@@ -1,22 +1,15 @@
-// __scrollTools = {
-//   getWebview: () => {
-//     return window
-//   },
-//
-//   scrollDownView: () => {
-//     var t = __scrollTools
-//     t.clearPNSTo()
-//     // t.getWebView().scrollBy(0, 200)
-//   },
-//
-//   clearPNSTo: function(){
-//     var t = __scrollTools
-//     try {
-//       clearTimeout(t.toPNS);
-//     } catch (x) {
-//
-//     }
-//   },
-//
-//   toPNS: null
-// }
+const { ipcRenderer } = require('electron')
+
+ipcRenderer.on('getLinks', () => {
+  ipcRenderer.sendToHost(getLinks())
+})
+
+function getLinks(){
+    var links = [];
+
+    for(var i = 0;i < document.links.length;i++){
+        links.push(document.links[i].href);
+    }
+
+    return links;
+}
