@@ -6,6 +6,8 @@ var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBt
 
 var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
 
+var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
+
 var scrollUpBtn, scrollDownBtn;
 
 var byId = (id) => {
@@ -164,11 +166,35 @@ dwell(forwardNavBtn, goForward)
 omnibox = byId('omnibox')
 refreshOmniBtn = byId('refreshPageBtn')
 cancelOmniBtn = byId('cancel-omni')
+searchOmniBtn = byId('searchBtn')
 
 dwell(omnibox, () => {
   hideAllOverlays()
   overlayOmnibox = byId('overlay-omnibox')
   overlayOmnibox.style.display = 'grid'
+})
+
+// SEARCH
+cancelSearchBtn = byId('cancel-search')
+submitSearchBtn = byId('submit-search')
+
+dwell(searchOmniBtn, () => {
+  hideAllOverlays()
+  overlaySearchBox = byId('overlay-search')
+  overlaySearchBox.style.display="grid"
+  inputSearchBox = byId('searchText')
+  inputSearchBox.focus();
+})
+
+dwell(submitSearchBtn, () => {
+  hideAllOverlays()
+  inputSearchBox = byId('searchText')
+  overlaySearchBox.style.display="none"
+  webView.src = "https://www.google.com/search?q=" + inputSearchBox.value;
+})
+
+dwell(cancelSearchBtn, () => {
+  overlaySearchBox.style.display = 'none'
 })
 
 dwell(refreshOmniBtn, reload)
@@ -183,8 +209,10 @@ cancelOptionsBtn = byId('cancel-options')
 
 dwell(options, () => {
   hideAllOverlays()
+  overlayOptions.style.display = 'none'
   overlayOptions = byId('overlay-options')
   overlayOptions.style.display = 'grid'
+
 })
 
 dwell(cancelOptionsBtn, () => {

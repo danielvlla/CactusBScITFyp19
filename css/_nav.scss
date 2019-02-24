@@ -1,10 +1,10 @@
 .navbtn {
-  color: $bluegrey;
+  color: $blue;
   cursor: pointer;
   font-size: 20px;
   border: 15px solid $white;
   border-radius: 20px;
-  background-color: $lightblue;
+  background-color: $offerwhite;
   width: 15%;
   font-size: 20px;
   transition: $dwellTime;
@@ -35,6 +35,7 @@
 
   &:hover {
     color: $darkblue;
+    background-color: $offwhite-3;
     &:before {
       opacity: 0.6;
       transform: scale(0);
@@ -81,7 +82,7 @@
     justify-content: center;
     align-items: center;
     color: $blue;
-    background-color: $lightblue;
+    background-color: $offerwhite;
     margin: 15px;
     border-radius: 10px;
     cursor: pointer;
@@ -89,6 +90,19 @@
     outline: none;
     overflow: hidden;
     position: relative;
+
+    input {
+      border: none;
+      outline: none;
+      height: 95%;
+      width: 90%;
+      border-radius: 5px;
+      font-size: 18px;
+      color: $blue;
+      background-color : $offerwhite;
+      cursor: pointer;
+      transition: $dwellTime;
+    }
 
     &:before {
       content: '';
@@ -113,15 +127,21 @@
 
     &:hover {
       color: $darkblue;
+      background-color: $offwhite-3;
       &:before {
         opacity: 0.6;
         transform: scale(0);
+      }
+
+      input {
+        color: $darkblue;
+        background-color: $offwhite-3;
       }
     }
 
     #loader {
       display: block;
-      border: 2px solid $lightblue;
+      border: 2px solid $offerwhite;
       border-top: 2px solid $blue;
       border-bottom: 2px solid $blue;
       border-radius: 50%;
@@ -140,19 +160,8 @@
     #favicon {
       display: none;
       margin-right: auto;
+      color: $green;
       margin-left: auto;
-    }
-
-    input {
-      border: none;
-      outline: none;
-      height: 95%;
-      width: 90%;
-      border-radius: 5px;
-      font-size: 18px;
-      color: $blue;
-      background-color : $lightblue;
-      cursor: pointer;
     }
   }
 }

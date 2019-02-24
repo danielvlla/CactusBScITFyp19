@@ -3,8 +3,9 @@
   position: absolute;
   width: 100%;
   height: calc(100vh - #{$navHeight});
-  opacity: 0.7;
+  // opacity: 0.9;
   z-index: 3;
+  background-color: rgba($bluegrey, 0.3);;
 }
 
 #overlay-nav {
@@ -107,26 +108,64 @@
   }
 }
 
+#overlay-search {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+  'input input'
+  'search cancel';
+  // opacity: 1;
+
+  #search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    margin: 3px;
+    outline: none;
+    position: relative;
+    z-index: 4;
+    opacity: 1;
+    grid-area: input;
+    color: $bluegrey;
+
+    input {
+      outline: none;
+      border-radius: 10px;
+      box-shadow: -14px 14px 36px -8px $lightgrey;
+      width: 40em;
+      background: white;
+      padding: 25px 40px;
+      font-size: 18px;
+      border: none;
+    }
+
+  }
+
+  #submit-search {
+    grid-area: search;
+  }
+}
+
 .overlayBtn {
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: -18px 23px 76px -26px $lightgrey;
-  border-radius: 20px;
-  margin: 3px;
+  background-color: $offwhite;
+  border-radius: 15px;
+  margin: 5px;
   cursor: pointer;
   outline: none;
   overflow: hidden;
   position: relative;
   z-index: 4;
 
-  background-color: $offwhite;
-  color: $blue;
+  color: $lightblue;
   transition: $dwellTime;
 
   &:before {
     content: '';
-    background: lighten($blue, 20%);
+    background: lighten($blue, 5%);
     width: 40em;
     height: 40em;
     display: inline-block;
@@ -147,11 +186,14 @@
 
   &:hover {
     color: $darkblue;
+
     &:before {
       opacity: 0.6;
       transform: scale(0);
     }
   }
+
+
 }
 
 div .cancelBtn {
