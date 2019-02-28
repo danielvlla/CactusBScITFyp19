@@ -20,6 +20,24 @@
   animation-name: fadeInUp;
 }
 
+@keyframes fadeOutDown {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 40px, 0);
+    opacity: 0;
+  }
+}
+
+.fadeOutDown {
+  animation-duration: 0.6s;
+  animation-fill-mode: both;
+  opacity: 1;
+  animation-name: fadeOutDown;
+}
+
 .shake {
   animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
   transform: translate3d(0, 0, 0);

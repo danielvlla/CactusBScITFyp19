@@ -1,9 +1,12 @@
+var fs = require('fs')
+
 var back, forward, backOrForward, omni, omnibox, webView;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
 var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
 var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
 var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
 var scrollUpBtn, scrollDownBtn;
+var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon;
 
 var byId = (id) => {
   return document.getElementById(id);
@@ -13,6 +16,10 @@ back = byId('backBtn')
 forward = byId('forwardBtn')
 omni = byId('url')
 webView = byId('webview')
+dialog = byId('dialog')
+dialogMessage = byId('dialogMessage')
+dialogErrorIcon = byId('dialogError')
+dialogSuccessIcon = byId('dialogSuccess')
 
 // webView.addEventListener('dom-ready', () => {
 //   webView.openDevTools();
@@ -263,4 +270,52 @@ webview.addEventListener('dom-ready', () => {
   webView.addEventListener('ipc-message', (e) => {
     console.log(e.channel)
   })
+})
+
+// BOOKMARKS
+bookmarkOmniBtn = byId('bookmarkPageBtn')
+
+dwell(bookmarkOmniBtn, () => {
+  fs.readFile('bookmarks.json', 'utf8', (err, data) => {
+    var bookmark = { url: webView.src, name: webView.getTitle() };
+
+    if (err) {
+      console.log(err)
+    } else {
+      var bookmarks = JSON.parse(data)
+      var exists = false;
+
+      for(i=0; bookmarks.bookmarks.length > i; i++) {
+        if (bookmarks.bookmarks[i].url === bookmark.url) {
+          exists = true;
+        }
+      }
+
+      if (!exists) {
+        bookmarks.bookmarks.push(bookmark)
+        bookmarksJson = JSON.stringify(bookmarks)
+        fs.writeFile('bookmarks.json', bookmarksJson, 'utf8', (err) => {
+          if (err) throw err
+        })
+        dialogMessage.innerHTML = 'Bookmark added succesfully!'
+        dialogErrorIcon.style.display = 'none'
+        dialogSuccessIcon.style.display = 'block'
+      } else {
+        dialogSuccessIcon.style.display = 'none'
+        dialogMessage.innerHTML = 'Bookmark already exists!'
+        dialogErrorIcon.style.display = 'block'
+      }
+    }
+  })
+
+  hideAllOverlays()
+  dialog.style.display = 'flex'
+  setTimeout(() => {
+    dialog.classList.add('fadeOutDown')
+  }, 3000);
+
+  setTimeout(() => {
+    dialog.style.display = 'none'
+    dialog.classList.remove('fadeOutDown')
+  }, 3600);
 })

@@ -109,6 +109,21 @@
         </div>
       </div>
 
+      <div id="dialog" class="fadeInUp">
+        <div id="dialogBox">
+          <div class="dialogIcon fa-stack" id="dialogSuccess">
+            <i class="far fa-circle fa-stack-2x"></i>
+            <i class="fas fa-check fa-stack-1x"></i>
+          </div>
+
+          <div class="dialogIcon fa-stack" id="dialogError">
+            <i class="far fa-circle fa-stack-2x"></i>
+            <i class="fas fa-exclamation fa-stack-1x"></i>
+          </div>
+          <div id="dialogMessage"></div>
+        </div>
+      </div>
+
       <webview id="webview" class="webpage" src="http://www.google.com/" preload="./inject.js" autosize="on"></webview>
 
     </div>
