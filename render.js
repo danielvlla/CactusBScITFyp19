@@ -20,16 +20,19 @@ dialog = byId('dialog')
 dialogMessage = byId('dialogMessage')
 dialogErrorIcon = byId('dialogError')
 dialogSuccessIcon = byId('dialogSuccess')
+scrollUpBtn = byId('scroll-up')
+scrollDownBtn = byId('scroll-down')
 
-// webView.addEventListener('dom-ready', () => {
-//   webView.openDevTools();
-// })
+webView.addEventListener('dom-ready', () => {
+  webView.openDevTools();
+})
 
 back.onclick = goBack
 forward.onclick = goForward
 omni.addEventListener('keydown', sanitiseUrl)
 omni.onclick = displayUrl
-webView.addEventListener('did-start-loading', updateOmnibox)
+webView.addEventListener('did-start-loading', loadingOmnibox)
+webView.addEventListener('dom-ready', scroller())
 
 // Sanitises URL
 function sanitiseUrl (event) {
@@ -66,7 +69,7 @@ function goForward() {
   webView.goForward();
 }
 
-function updateOmnibox (event) {
+function loadingOmnibox() {
   let loader = byId('loader');
   let favicon = byId('favicon');
 
@@ -91,8 +94,34 @@ function displayUrl() {
   omni.value = webView.src;
 }
 
-// ============= DWELL =============
+function scroller() {
+  var timeoutSroll;
+  scrollUpBtn.onmouseover = () => {
+    timeoutScroll = setInterval(() => {
+      webView.executeJavaScript('document.documentElement.scrollBy(0, -10)');
+    }, 20)
+  }
 
+  scrollUpBtn.onmouseout = () => {
+    if (timeoutScroll) {
+      clearInterval(timeoutScroll)
+    }
+  }
+
+  scrollDownBtn.onmouseover = () => {
+    timeoutScroll = setInterval(() => {
+      webView.executeJavaScript('document.documentElement.scrollBy(0, 10)');
+    }, 20)
+  }
+
+  scrollDownBtn.onmouseout = () => {
+    if (timeoutScroll) {
+      clearInterval(timeoutScroll)
+    }
+  }
+}
+
+// ============= DWELL =============
 let dwellTime = 1000;
 
 var dwell = (elem, callback) => {
@@ -214,65 +243,13 @@ dwell(options, () => {
   overlayOptions.style.display = 'none'
   overlayOptions = byId('overlay-options')
   overlayOptions.style.display = 'grid'
-
 })
 
 dwell(cancelOptionsBtn, () => {
   overlayOptions.style.display = 'none'
 })
 
-// zoomInBtn = byId('zoomInBtn')
-// zoomLevel = 150
-// dwell(zoomInBtn, () => {
-//   webView.executeJavaScript(`document.body.style.zoom = ${zoomLevel}%;`);
-// })
-//
-// zoomOutBtn = byId('zoomOutBtn')
-// dwell(zoomOutBtn, () => {
-//   webView.executeJavaScript('document.body.style.zoom = "'+ zoomLevel +'";');
-// })
-
-
-// ======== SCROLLING ========
-scrollUpBtn = byId('scroll-up')
-scrollDownBtn = byId('scroll-down')
-
-var timeoutSroll;
-
-webView.addEventListener('dom-ready', (e) => {
-  scrollUpBtn.onmouseover = (e) => {
-    timeoutScroll = setInterval(() => {
-      webView.executeJavaScript('document.documentElement.scrollBy(0, -10)');
-    }, 20)
-  }
-
-  scrollUpBtn.onmouseout = (e) => {
-    if (timeoutScroll) {
-      clearInterval(timeoutScroll)
-    }
-  }
-
-  scrollDownBtn.onmouseover = (e) => {
-    timeoutScroll = setInterval(() => {
-      webView.executeJavaScript('document.documentElement.scrollBy(0, 10)');
-    }, 20)
-  }
-
-  scrollDownBtn.onmouseout = (e) => {
-    if (timeoutScroll) {
-      clearInterval(timeoutScroll)
-    }
-  }
-});
-
-webview.addEventListener('dom-ready', () => {
-  webView.send('getLinks')
-  webView.addEventListener('ipc-message', (e) => {
-    console.log(e.channel)
-  })
-})
-
-// BOOKMARKS
+// ======== BOOKMARKS ========
 bookmarkOmniBtn = byId('bookmarkPageBtn')
 
 dwell(bookmarkOmniBtn, () => {
@@ -318,4 +295,12 @@ dwell(bookmarkOmniBtn, () => {
     dialog.style.display = 'none'
     dialog.classList.remove('fadeOutDown')
   }, 3600);
+})
+
+webview.addEventListener('dom-ready', () => {
+  // webView.send('getLinks')
+  webView.send('listenLinks')
+  webView.addEventListener('ipc-message', (e) => {
+    console.log(e.returnValue)
+  })
 })

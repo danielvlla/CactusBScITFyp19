@@ -233,30 +233,31 @@ div .cancelBtn {
 }
 
 .scrollBtn {
-  padding: 20px;
+  padding: 30px;
   cursor: pointer;
   outline: none;
   overflow: hidden;
   position: relative;
   background-color: transparent;
   z-index: 3;
+  border-radius: 50%;
+  right: 30px;
 
   color: $lightblue;
   transition: $dwellTime/2;
 
   &:hover {
     color: $darkblue;
+    background-color: $offwhite;
   }
 }
 
 #scroll-up {
   position: fixed;
-  top: 95px;
-  right: 30px;
+  top: 150px;
 }
 
 #scroll-down {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 70px;
 }
