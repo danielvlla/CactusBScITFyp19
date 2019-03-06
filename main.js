@@ -4,7 +4,7 @@ const { ipcMain } = require('electron')
 let mainWindow
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 800, height: 600 })
+  mainWindow = new BrowserWindow({ width: 800, height: 600, nodeIntegration: true, webviewTag: true })
   mainWindow.maximize();
 
   mainWindow.loadFile('index.html')
@@ -39,6 +39,6 @@ app.on('activate', () => {
 })
 
 ipcMain.on('getLink', (event, message) => {
-  console.log(message)
+  // console.log(message)
   mainWindow.webContents.send('getLink', message)
 })

@@ -92,7 +92,12 @@ function loadingOmnibox() {
 }
 
 function displayUrl() {
-  omni.value = webview.src;
+  omni.classList.add('fadeOutDown')
+  setTimeout(() => {
+    omni.classList.remove('fadeOutDown')
+    omni.value = webview.src;
+    omni.classList.add('fadeInUp')
+  }, 200);
 }
 
 function scroller() {
@@ -140,8 +145,10 @@ var dwell = (elem, callback) => {
 
 function hideAllOverlays() {
   overlayNav.style.display = 'none'
+
   overlayOmnibox = byId('overlay-omnibox')
   overlayOmnibox.style.display = 'none'
+
   overlayOptions = byId('overlay-options')
   overlayOptions.style.display = 'none'
 }
@@ -301,11 +308,10 @@ dwell(bookmarkOmniBtn, () => {
 webview.addEventListener('dom-ready', () => {
   var head = document.getElementsByTagName('head')[0]
   var linkToWebviewCss = head.children[4].href
-  var cssContent = ''
 
   readFile(linkToWebviewCss, (css, err) => {
     if (err) throw error
-    cssContent = String(css)
+    var cssContent = String(css)
     webview.insertCSS(cssContent)
   })
 

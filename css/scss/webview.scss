@@ -2,7 +2,6 @@
 
 .linkDwell {
   position: relative;
-  border: 1px solid $green;
 
   &:after {
     content: '';
@@ -18,7 +17,8 @@
 
   &:hover {
     color: $green !important;
-    background-color: lighten($green, 70%) !important;
+    background-color: lighten($green, 50%) !important;
+    border-radius: 5px;
 
     &:after {
       width: 100%;
