@@ -12,8 +12,9 @@ function getLinkOnDwell() {
   for (var i=0; i < anchorTags.length; i++) {
     var timeout;
 
+    anchorTags[i].classList.add('linkDwell')
+
     anchorTags[i].addEventListener('mouseover', (e) => {
-      e.target.classList.add('linkDwell')
       timeout = setTimeout(() => {
         if (e.target.tagName.toLowerCase() === 'a') {
           return ipcRenderer.send('getLink', e.target.href)

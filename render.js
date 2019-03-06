@@ -299,10 +299,33 @@ dwell(bookmarkOmniBtn, () => {
 })
 
 webview.addEventListener('dom-ready', () => {
-  webview.insertCSS("a{background-color:'red';color:'green'}.linkDwell{cursor:pointer;background-color:transparent;padding:10px;transition:1000}.linkDwell:hover{color:#17c39d;background-color:#83f0d8}")
+  var head = document.getElementsByTagName('head')[0]
+  var linkToWebviewCss = head.children[4].href
+  var cssContent = ''
+
+  readFile(linkToWebviewCss, (css, err) => {
+    if (err) throw error
+    cssContent = String(css)
+    webview.insertCSS(cssContent)
+  })
+
   webview.send('listenLinks')
 })
 
 ipcRenderer.on('getLink', (event, message) => {
   webview.src = message
 })
+
+function readFile(file, callback) {
+  var rawFile = new XMLHttpRequest()
+  rawFile.open("GET", file, true)
+
+  rawFile.onreadystatechange = (e) => {
+    if(rawFile.readyState === 4) {
+      if(rawFile.status === 200 || rawFile.status == 0) {
+        callback(rawFile.responseText, null)
+      }
+    }
+  }
+  rawFile.send(null)
+}
