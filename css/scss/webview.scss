@@ -1,0 +1,19 @@
+@import './_vars.scss';
+
+a {
+  background-color: 'red';
+  color: 'green';
+}
+
+.linkDwell {
+  cursor: pointer;
+  background-color: transparent;
+  padding: 10px;
+
+  transition: 1000ms;
+
+  &:hover {
+    color: $green !important;
+    background-color: lighten($green, 5%) !important;
+  }
+}

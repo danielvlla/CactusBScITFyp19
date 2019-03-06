@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron')
+const { ipcMain } = require('electron')
 
 let mainWindow
 
@@ -7,6 +8,8 @@ function createWindow () {
   mainWindow.maximize();
 
   mainWindow.loadFile('index.html')
+
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element.
@@ -33,4 +36,9 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+ipcMain.on('getLink', (event, message) => {
+  console.log(message)
+  mainWindow.webContents.send('getLink', message)
 })

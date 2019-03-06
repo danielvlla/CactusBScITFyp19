@@ -1,6 +1,7 @@
 var fs = require('fs')
+const { ipcRenderer } = require('electron')
 
-var back, forward, backOrForward, omni, omnibox, webView;
+var back, forward, backOrForward, omni, omnibox, webview;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
 var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
 var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
@@ -15,7 +16,7 @@ var byId = (id) => {
 back = byId('backBtn')
 forward = byId('forwardBtn')
 omni = byId('url')
-webView = byId('webview')
+webview = byId('webview')
 dialog = byId('dialog')
 dialogMessage = byId('dialogMessage')
 dialogErrorIcon = byId('dialogError')
@@ -23,16 +24,16 @@ dialogSuccessIcon = byId('dialogSuccess')
 scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
 
-webView.addEventListener('dom-ready', () => {
-  webView.openDevTools();
+webview.addEventListener('dom-ready', () => {
+  webview.openDevTools();
 })
 
 back.onclick = goBack
 forward.onclick = goForward
 omni.addEventListener('keydown', sanitiseUrl)
 omni.onclick = displayUrl
-webView.addEventListener('did-start-loading', loadingOmnibox)
-webView.addEventListener('dom-ready', scroller())
+webview.addEventListener('did-start-loading', loadingOmnibox)
+webview.addEventListener('dom-ready', scroller())
 
 // Sanitises URL
 function sanitiseUrl (event) {
@@ -42,11 +43,11 @@ function sanitiseUrl (event) {
       let https = val.slice(0, 8).toLowerCase();
       let http = val.slice(0, 7).toLowerCase();
       if (https === 'https://') {
-        webView.loadURL(val);
+        webview.loadURL(val);
       } else if (http === 'http://') {
-        webView.loadURL(val);
+        webview.loadURL(val);
       } else {
-        webView.loadURL('http://'+ val);
+        webview.loadURL('http://'+ val);
       }
   }
 }
@@ -56,17 +57,17 @@ function sanitiseUrl (event) {
 // =================================
 function reload() {
   hideAllOverlays()
-  webView.reload();
+  webview.reload();
 }
 
 function goBack() {
   hideAllOverlays()
-  webView.goBack();
+  webview.goBack();
 }
 
 function goForward() {
   hideAllOverlays()
-  webView.goForward();
+  webview.goForward();
 }
 
 function loadingOmnibox() {
@@ -82,23 +83,23 @@ function loadingOmnibox() {
   const loadStop = () => {
     favicon.style.display="block"
     loader.style.display = "none"
-    omni.value = webView.getTitle()
-    // omni.value = webView.src;
+    omni.value = webview.getTitle()
+    // omni.value = webview.src;
   }
 
-  webView.addEventListener('did-start-loading', loadStart)
-  webView.addEventListener('did-stop-loading', loadStop)
+  webview.addEventListener('did-start-loading', loadStart)
+  webview.addEventListener('did-stop-loading', loadStop)
 }
 
 function displayUrl() {
-  omni.value = webView.src;
+  omni.value = webview.src;
 }
 
 function scroller() {
   var timeoutSroll;
   scrollUpBtn.onmouseover = () => {
     timeoutScroll = setInterval(() => {
-      webView.executeJavaScript('document.documentElement.scrollBy(0, -10)');
+      webview.executeJavaScript('document.documentElement.scrollBy(0, -10)');
     }, 20)
   }
 
@@ -110,7 +111,7 @@ function scroller() {
 
   scrollDownBtn.onmouseover = () => {
     timeoutScroll = setInterval(() => {
-      webView.executeJavaScript('document.documentElement.scrollBy(0, 10)');
+      webview.executeJavaScript('document.documentElement.scrollBy(0, 10)');
     }, 20)
   }
 
@@ -156,19 +157,19 @@ dwell(backOrForward, () => {
 
   hideAllOverlays()
 
-  if(!webView.canGoBack() && webView.canGoForward()) {
+  if(!webview.canGoBack() && webview.canGoForward()) {
     overlayNav.id = 'overlay-nav-forward-only'
     backNavBtn.style.display = 'none'
     forwardNavBtn.style.display = 'flex'
     overlayNav = byId('overlay-nav-forward-only')
     overlayNav.style.display = 'grid'
-  } else if (!webView.canGoForward() && webView.canGoBack()) {
+  } else if (!webview.canGoForward() && webview.canGoBack()) {
     overlayNav.id = 'overlay-nav-back-only'
     backNavBtn.style.display = 'flex'
     forwardNavBtn.style.display = 'none'
     overlayNav = byId('overlay-nav-back-only')
     overlayNav.style.display = 'grid'
-  } else if (webView.canGoBack() && webView.canGoForward()) {
+  } else if (webview.canGoBack() && webview.canGoForward()) {
     overlayNav.id = 'overlay-nav'
     backNavBtn.style.display = 'flex'
     forwardNavBtn.style.display = 'flex'
@@ -221,7 +222,7 @@ dwell(submitSearchBtn, () => {
   hideAllOverlays()
   inputSearchBox = byId('searchText')
   overlaySearchBox.style.display="none"
-  webView.src = "https://www.google.com/search?q=" + inputSearchBox.value;
+  webview.src = "https://www.google.com/search?q=" + inputSearchBox.value;
 })
 
 dwell(cancelSearchBtn, () => {
@@ -254,7 +255,7 @@ bookmarkOmniBtn = byId('bookmarkPageBtn')
 
 dwell(bookmarkOmniBtn, () => {
   fs.readFile('bookmarks.json', 'utf8', (err, data) => {
-    var bookmark = { url: webView.src, name: webView.getTitle() };
+    var bookmark = { url: webview.src, name: webview.getTitle() };
 
     if (err) {
       console.log(err)
@@ -298,9 +299,10 @@ dwell(bookmarkOmniBtn, () => {
 })
 
 webview.addEventListener('dom-ready', () => {
-  // webView.send('getLinks')
-  webView.send('listenLinks')
-  webView.addEventListener('ipc-message', (e) => {
-    console.log(e.returnValue)
-  })
+  webview.insertCSS("a{background-color:'red';color:'green'}.linkDwell{cursor:pointer;background-color:transparent;padding:10px;transition:1000}.linkDwell:hover{color:#17c39d;background-color:#83f0d8}")
+  webview.send('listenLinks')
+})
+
+ipcRenderer.on('getLink', (event, message) => {
+  webview.src = message
 })

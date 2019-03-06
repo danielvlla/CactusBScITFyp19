@@ -4,7 +4,7 @@
   "description": "Gaze Interaction Browser",
   "main": "main.js",
   "scripts": {
-    "start": "gulp genCss && electron ."
+    "start": "gulp mainCss && gulp webviewCss && electron ."
   },
   "author": "Daniel Vella",
   "license": "ISC",

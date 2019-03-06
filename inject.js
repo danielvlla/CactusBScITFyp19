@@ -1,47 +1,32 @@
 const { ipcRenderer } = require('electron')
 
-ipcRenderer.on('getLinks', () => {
-  ipcRenderer.sendToHost(getLinks())
+let dwellTime = 1000;
+
+ipcRenderer.on('listenLinks', (event, message) => {
+  ipcRenderer.sendToHost(getLinkOnDwell())
 })
 
-ipcRenderer.on('listenLinks', () => {
-  ipcRenderer.send(addListeners())
-})
+function getLinkOnDwell() {
+  var anchorTags = document.getElementsByTagName('a')
 
-function getLinks(){
-    var links = [];
-
-    for(var i = 0;i < document.links.length;i++){
-        links.push(document.links[i].href);
-    }
-
-    return links;
-}
-
-function addListeners() {
-  var anchors = document.getElementsByTagName('a');
-  return getLink(anchors)
-}
-
-var getLink = (elements, callback) => {
-  for (var i=0; i< elements.length; i++) {
+  for (var i=0; i < anchorTags.length; i++) {
     var timeout;
 
-    elements[i].addEventListener('mouseover', (e) => {
+    anchorTags[i].addEventListener('mouseover', (e) => {
+      e.target.classList.add('linkDwell')
       timeout = setTimeout(() => {
         if (e.target.tagName.toLowerCase() === 'a') {
-          console.log(e.target.href)
-          return e.target.href
+          return ipcRenderer.send('getLink', e.target.href)
         } else if (e.target.parentNode.tagName.toLowerCase() === 'a') {
-          return e.target.parentNode.href
+          return ipcRenderer.send('getLink', e.target.parentNode.href)
         } else {
           console.log(e)
         }
-      }, 1000)
+      }, dwellTime)
     })
 
-  elements[i].addEventListener('mouseout', () => {
-    clearTimeout(timeout);
-  })
-}
+    anchorTags[i].addEventListener('mouseout', () => {
+      clearTimeout(timeout);
+    })
+  }
 }
