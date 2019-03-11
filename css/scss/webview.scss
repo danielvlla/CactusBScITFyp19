@@ -1,6 +1,12 @@
 @import './_vars.scss';
 
-.linkDwell {
+body { 
+  overflow: hidden;
+  cursor: none;
+  user-select: none;
+}
+
+.linkMarker {
   position: relative;
 
   &:after {
@@ -14,14 +20,14 @@
     background: $green !important;
     transition: $dwellTime ease-in-out;
   }
+}
 
-  &:hover {
-    color: $green !important;
-    background-color: lighten($green, 50%) !important;
-    border-radius: 5px;
+.linkDwell {
+  color: $green !important;
+  background-color: lighten($green, 50%) !important;
+  border-radius: 5px;
 
-    &:after {
-      width: 100%;
-    }
+  &:after {
+    width: 100%;
   }
 }

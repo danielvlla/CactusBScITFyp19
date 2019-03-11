@@ -128,7 +128,7 @@ function scroller() {
 }
 
 // ============= DWELL =============
-let dwellTime = 1000;
+let dwellTime = 2000;
 
 var dwell = (elem, callback) => {
   let timeout = null

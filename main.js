@@ -4,12 +4,14 @@ const { ipcMain } = require('electron')
 let mainWindow
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 800, height: 600, nodeIntegration: true, webviewTag: true })
+  mainWindow = new BrowserWindow({ nodeIntegration: true, webviewTag: true })
+  // secondaryWindow = new BrowserWindow({ parent: mainWindow, frame: false, modal: true, show: false })
   mainWindow.maximize();
 
   mainWindow.loadFile('index.html')
+  // secondaryWindow.loadURL('www.um.edu.mt')
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element.
