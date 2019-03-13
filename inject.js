@@ -1,13 +1,13 @@
 const { ipcRenderer } = require('electron')
 const cursor          = require('./js/cursor.js')
 
-const dwellTime = 2000;
+const dwellTime = 2000
 var c
 
 document.addEventListener('DOMContentLoaded', () => {
   cursor.createCursor()
   cursor.followCursor()
-  c = document.querySelector('#cursor')
+  c = document.getElementById('cursor')
 })
 
 ipcRenderer.on('listenLinks', (event, message) => {
@@ -15,11 +15,16 @@ ipcRenderer.on('listenLinks', (event, message) => {
 })
 
 function getLinkOnDwell() {
+  var distance = 50
   var cursorLoc
   var dwellTimer = 0
   var enteredLink
-  var enteredBounds
-  var distance = 20
+  var enteredBounds = {
+    top: null,
+    bottom: null,
+    right: null,
+    left: null,
+  }
 
   var anchorTags = document.querySelectorAll('a')
 
@@ -38,11 +43,13 @@ function getLinkOnDwell() {
         return e.tagName === 'A'
       })
       if (el) {
+        el.classList.add('linkDwell')
         const elBounds = el.getBoundingClientRect()
         enteredLink = el
-        enteredBounds = elBounds
-        console.log(enteredBounds)
-        el.classList.add('linkDwell')
+        enteredBounds = setDistance(elBounds)
+        stopAtY = elBounds.top + (elBounds.height / 2)
+        stopAtX = elBounds.left + (elBounds.width / 2)
+        cursor.stopCursor(stopAtX, stopAtY)
         if (!dwellTimer) {
           dwellTimer = setTimeout(() => {
             return ipcRenderer.send('getLink', el.href)
@@ -52,16 +59,24 @@ function getLinkOnDwell() {
     }
 
     if (enteredLink) {
-      if (cursorLoc.x > enteredBounds.right 
-        || cursorLoc.x < enteredBounds.left 
-        || cursorLoc.y < enteredBounds.top 
-        || cursorLoc.y > enteredBounds.bottom) {
+      if (cursorLoc.x > enteredBounds.right || cursorLoc.x < enteredBounds.left 
+        || cursorLoc.y < enteredBounds.top || cursorLoc.y > enteredBounds.bottom) {
           enteredLink.classList.remove('linkDwell')
+          enteredLink = null
           clearTimeout(dwellTimer)
           dwellTimer = 0
+          cursor.followCursor()
       }
     }
   })
+
+  function setDistance(bounds) {
+    enteredBounds.top = bounds.top - distance
+    enteredBounds.right = bounds.right + distance
+    enteredBounds.bottom = bounds.bottom + distance
+    enteredBounds.left = bounds.left - distance
+    return enteredBounds
+  }
 }
 
 // function getLinkOnDwell() {
