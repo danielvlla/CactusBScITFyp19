@@ -7,17 +7,18 @@ exports.createCursor = () => {
   cursor.style.color = "#1a1a26"
   cursor.style.zIndex = '1000'
   document.body.appendChild(cursor);
-
 }
 
 exports.followCursor = () => {
   var cursor = document.getElementById('cursor')
+  var interval 
+
   document.addEventListener('mousemove', getMouse)
 
   cursor.style.position = 'absolute'
   var cursorPos = { x: 0, y: 0 }
-
-  setInterval(followMouse, 50)
+  
+  interval = setInterval(followMouse, 50)
 
   var mouse = { x: 0, y: 0 }
   

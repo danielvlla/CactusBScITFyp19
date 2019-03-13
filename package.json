@@ -14,6 +14,7 @@
     "gulp-sass": "^4.0.2"
   },
   "dependencies": {
+    "eslint": "^5.15.1",
     "path": "^0.12.7"
   }
 }
