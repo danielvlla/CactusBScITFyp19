@@ -1,0 +1,1 @@
+exports.dwellTime = 2000

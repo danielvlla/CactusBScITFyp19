@@ -1,38 +1,84 @@
 const { ipcRenderer } = require('electron')
 const cursor          = require('./js/cursor.js')
+const config          = require('./js/config.js')
 
-const dwellTime = 2000
-var c
+const dwellTime = config.dwellTime
+var c 
+
+// const state = {
+//   bounds: c.getBoundingClientRect(),
+//   threshold: 50,
+//   ratio: 3.5,
+//   isMagnetic: false,
+//   mouse: {
+//     x: 0,
+//     y: 0
+//   },
+//   ease: {
+//     x: 0,
+//     y: 0,
+//     scale: 1,
+//     value: 0.2
+//   },
+//   transform: {
+//     x: 0,
+//     y: 0,
+//     scale: 1,
+//     max: 50
+//   },
+//   width: window.innerWidth,
+//   height: window.innerHeight,
+//   history: false
+// }
+
+// const mouseMove = ({ clientX, clientY }) => {
+//   Object.assign(state, {
+//     mouse: {
+//       x: clientX,
+//       y: clientY
+//     },
+//     isMagnetic: isMagnetic(clientX, clientY)
+//   })
+// }
+
+// const isMagnetic = (x, y) => {
+//   const { bounds } = state
+//   const centerX = bounds.left 
+// }
 
 document.addEventListener('DOMContentLoaded', () => {
-  cursor.createCursor()
-  cursor.followCursor()
-  c = document.getElementById('cursor')
+  cursor.createCursor('cursor')
+  c = document.querySelector('#cursor')
+  cursor.followCursor('cursor')
 })
 
 ipcRenderer.on('listenLinks', (event, message) => {
   ipcRenderer.sendToHost(getLinkOnDwell())
 })
 
-function getLinkOnDwell() {
-  var distance = 50
+const getLinkOnDwell = () => {
+  const distance = 50
   var cursorLoc
+  var hiddenCursor
+  var hiddenCursorLoc
   var dwellTimer = 0
   var enteredLink
+  var elBounds
+  var stoppedCursor = 0
   var enteredBounds = {
     top: null,
     bottom: null,
     right: null,
     left: null,
   }
+  var anchorTags
 
-  var anchorTags = document.querySelectorAll('a')
-
+  anchorTags = document.querySelectorAll('a')
   for (var i=0; i<anchorTags.length; i++) {
     anchorTags[i].classList.add('linkMarker')
   }
 
-  document.addEventListener('mousemove', () => {
+  document.addEventListener('mousemove', (e) => {
     cursorLoc = c.getBoundingClientRect()
     var el = null
 
@@ -43,96 +89,68 @@ function getLinkOnDwell() {
         return e.tagName === 'A'
       })
       if (el) {
+        if (!hiddenCursor) {
+          cursor.createCursor('hiddenCursor')
+          hiddenCursor = document.getElementById('hiddenCursor')
+        }
+
         el.classList.add('linkDwell')
-        const elBounds = el.getBoundingClientRect()
+        elBounds = el.getBoundingClientRect()
         enteredLink = el
         enteredBounds = setDistance(elBounds)
+        
         stopAtY = elBounds.top + (elBounds.height / 2)
         stopAtX = elBounds.left + (elBounds.width / 2)
-        cursor.stopCursor(stopAtX, stopAtY)
+        cursor.stopCursor('cursor', stopAtX, stopAtY)
+        stoppedCursor = 1
+        cursor.followCursor('hiddenCursor')
+
         if (!dwellTimer) {
           dwellTimer = setTimeout(() => {
             return ipcRenderer.send('getLink', el.href)
           }, dwellTime)
         }
+
       }
     }
-
+    
     if (enteredLink) {
       if (cursorLoc.x > enteredBounds.right || cursorLoc.x < enteredBounds.left 
         || cursorLoc.y < enteredBounds.top || cursorLoc.y > enteredBounds.bottom) {
-          enteredLink.classList.remove('linkDwell')
-          enteredLink = null
-          clearTimeout(dwellTimer)
-          dwellTimer = 0
-          cursor.followCursor()
+          clearDwell()
       }
+    }
+
+    if (stoppedCursor) {
+      hiddenCursorLoc = hiddenCursor.getBoundingClientRect()
+      if (hiddenCursorLoc.x > enteredBounds.right || hiddenCursorLoc.x < enteredBounds.left 
+        || hiddenCursorLoc.y < enteredBounds.top || hiddenCursorLoc.y > enteredBounds.bottom) {
+          cursor.destroyCursor('hiddenCursor')
+          cursor.continueCursor('cursor', e.clientX, e.clientY)
+          stoppedCursor = 0
+        }
     }
   })
 
-  function setDistance(bounds) {
+  document.addEventListener('mouseleave', () => {
+    clearDwell()
+    // Insert Inactivate Mouse Function
+  })
+
+  const setDistance = (bounds) => {
     enteredBounds.top = bounds.top - distance
     enteredBounds.right = bounds.right + distance
     enteredBounds.bottom = bounds.bottom + distance
     enteredBounds.left = bounds.left - distance
     return enteredBounds
   }
+
+  const clearDwell = () => {
+    if (enteredLink) {
+      enteredLink.classList.remove('linkDwell')
+      enteredLink = null
+    }
+    clearTimeout(dwellTimer)
+    dwellTimer = 0
+  }
 }
-
-// function getLinkOnDwell() {
-//   var anchorTags = document.getElementsByTagName('a')
-
-//   for (var i=0; i < anchorTags.length; i++) {
-//     var box
-
-//     anchorTags[i].classList.add('linkMarker')
-
-//     anchorTags[i].addEventListener('mouseover', (e) => {
-//       e.target.classList.add('linkDwell')
-//       linkTimeout = setTimeout(() => {
-//         if (e.target.tagName.toLowerCase() === 'a') {
-//           return ipcRenderer.send('getLink', e.target.href)
-//         } else if (e.target.parentNode.tagName.toLowerCase() === 'a') {
-//           return ipcRenderer.send('getLink', e.target.parentNode.href)
-//         } else {
-//           console.log(e)
-//         }
-//       }, dwellTime)
-
-//     })
-
-//     anchorTags[i].addEventListener('mouseout', (e) => {
-//       box = e.target.getBoundingClientRect();
-//       isMouseNearLink(box, (bool) => {
-//         if (!bool) {
-//           // Stop selection
-//           e.target.classList.remove('linkDwell')
-//           clearTimeout(linkTimeout)
-//         }
-//       })
-//       // if mouse is on another element, remove link dwell and clear timeout
-//     })
-//   }
-// }
-
-// function isMouseNearLink(box, callback) {
-//   const distance = 30
-//   let bool = true;
-
-//   const { bottom, left, right, top } = box
-
-//   document.addEventListener('mousemove', checkDistance, true)
-
-//   function checkDistance(e) {
-//     if ( ((e.clientX > right) && (e.clientX - right) > distance) ||
-//     ((left > e.clientX) && (left - e.clientX) > distance) ||
-//     ((e.clientY > bottom) && (e.clientY - bottom) > distance) ||
-//     ((top > e.clientY) && (top - e.clientY) > distance) ) {
-
-//       bool = false;
-//       document.removeEventListener('mousemove', checkDistance, true)
-//       callback(bool)
-
-//     }
-//   }
-// }

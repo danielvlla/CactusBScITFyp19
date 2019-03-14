@@ -1,5 +1,6 @@
 var fs = require('fs')
 const { ipcRenderer } = require('electron')
+const config          = require('./js/config.js')
 
 var back, forward, backOrForward, omni, omnibox, webview;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
@@ -128,7 +129,7 @@ function scroller() {
 }
 
 // ============= DWELL =============
-let dwellTime = 2000;
+let dwellTime = config.dwellTime;
 
 var dwell = (elem, callback) => {
   let timeout = null
