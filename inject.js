@@ -5,47 +5,6 @@ const config          = require('./js/config.js')
 const dwellTime = config.dwellTime
 var c 
 
-// const state = {
-//   bounds: c.getBoundingClientRect(),
-//   threshold: 50,
-//   ratio: 3.5,
-//   isMagnetic: false,
-//   mouse: {
-//     x: 0,
-//     y: 0
-//   },
-//   ease: {
-//     x: 0,
-//     y: 0,
-//     scale: 1,
-//     value: 0.2
-//   },
-//   transform: {
-//     x: 0,
-//     y: 0,
-//     scale: 1,
-//     max: 50
-//   },
-//   width: window.innerWidth,
-//   height: window.innerHeight,
-//   history: false
-// }
-
-// const mouseMove = ({ clientX, clientY }) => {
-//   Object.assign(state, {
-//     mouse: {
-//       x: clientX,
-//       y: clientY
-//     },
-//     isMagnetic: isMagnetic(clientX, clientY)
-//   })
-// }
-
-// const isMagnetic = (x, y) => {
-//   const { bounds } = state
-//   const centerX = bounds.left 
-// }
-
 document.addEventListener('DOMContentLoaded', () => {
   cursor.createCursor('cursor')
   c = document.querySelector('#cursor')
@@ -125,7 +84,11 @@ const getLinkOnDwell = () => {
       hiddenCursorLoc = hiddenCursor.getBoundingClientRect()
       if (hiddenCursorLoc.x > enteredBounds.right || hiddenCursorLoc.x < enteredBounds.left 
         || hiddenCursorLoc.y < enteredBounds.top || hiddenCursorLoc.y > enteredBounds.bottom) {
-          cursor.destroyCursor('hiddenCursor')
+
+          if (hiddenCursor) {
+            cursor.destroyCursor('hiddenCursor')
+            hiddenCursor = null
+          }
           cursor.continueCursor('cursor', e.clientX, e.clientY)
           stoppedCursor = 0
         }

@@ -2,8 +2,11 @@
 
 body { 
   overflow: hidden;
-  cursor: none !important;
   user-select: none;
+}
+
+a, input, button, div  {
+  cursor: none !important;
 }
 
 .linkMarker {
