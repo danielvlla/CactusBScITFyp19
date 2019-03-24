@@ -192,8 +192,6 @@
       transform: scale(0);
     }
   }
-
-
 }
 
 div .cancelBtn {
@@ -233,8 +231,10 @@ div .cancelBtn {
 }
 
 .scrollBtn {
-  padding: 30px;
-  cursor: pointer;
+  width: 120px;
+  height: 120px;
+  padding-top: 40px;
+  padding-left: 45px;
   outline: none;
   overflow: hidden;
   position: relative;
@@ -242,13 +242,13 @@ div .cancelBtn {
   z-index: 3;
   border-radius: 50%;
   right: 30px;
-
-  color: $lightblue;
+  opacity: 0.5;
+  color: $blue-2;
   transition: $dwellTime/2;
 
   &:hover {
-    color: $darkblue;
-    background-color: $offwhite;
+    color: $blue-2;
+    background-color: $blue-light;
   }
 }
 

@@ -46,9 +46,9 @@ function sanitiseUrl (event) {
       if (https === 'https://') {
         webview.loadURL(val);
       } else if (http === 'http://') {
-        webview.loadURL(val);
+        webview.loadURL('https://' + val);
       } else {
-        webview.loadURL('http://'+ val);
+        webview.loadURL('https://'+ val);
       }
   }
 }

@@ -1,0 +1,43 @@
+.dwellBtn {
+  color: $blue-2;
+  cursor: pointer;
+  font-size: 20px;
+  border: 15px solid $white;
+  border-radius: 20px;
+  background-color: $blue-light;
+  width: 15%;
+  transition: $dwellTime;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+
+  &:before {
+    content: '';
+    background: $darkblue;
+    width: 5em;
+    height: 5em;
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: {
+      left: (5em / -2);
+      top: (5em / -2);
+    }
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(1);
+    transition:
+      opacity $dwellTime cubic-bezier(0,0,.2,1),
+      transform $dwellTime cubic-bezier(0,0,.2,1);
+  }
+
+  &:hover {
+    color: $blue-light;
+    background-color: $blue-2;
+    &:before {
+      opacity: 0.6;
+      transform: scale(0);
+    }
+  }
+}

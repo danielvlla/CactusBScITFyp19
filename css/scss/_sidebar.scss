@@ -1,0 +1,52 @@
+#sidebar {
+  grid-column-start: 1;
+  top: 0;
+  left: 0;
+  height: calc(100vh - #{$navHeight});
+  background-color: $white;
+  border-right: 1px solid $lightgrey;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  align-items: flex-start;
+  padding: 30px;
+  text-align: left;
+
+  &_title {
+    color: $black;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+
+  &_subtitle {
+    color: $grey;
+    font-size: 0.8em;
+    padding-bottom: 25px;
+    border-bottom: 1px solid $lightgrey;
+    margin-bottom: 25px;
+  }
+
+  &_item {
+    @extend .dwellBtn;
+    height: 40px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+
+    &_title {
+      font-size: 0.9em;
+    }
+
+    &_link {
+      opacity: 0.4;
+      margin-top: 3px;
+      font-size: 0.7em;
+    }
+
+    &:hover {
+      color: $white;
+    }
+  }
+}

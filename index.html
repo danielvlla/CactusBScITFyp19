@@ -5,6 +5,7 @@
     <title>Browser</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/webview.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
   </head>
   <body id="browser">
 
@@ -125,7 +126,17 @@
         </div>
       </div>
 
-      <webview id="webview" class="webpage" src="http://www.google.com/" preload="./inject.js" autosize="on"></webview>
+      <div id='webview-container'>
+        <div id='sidebar'>
+          <div id='sidebar_title'>Link Navigation</div>
+          <div id='sidebar_subtitle'>Links will appear here as you read content.</div>
+          <div id='sidebar_item'>
+            <div id='sidebar_item_title'>Sample Title</div>
+            <div id='sidebar_item_link'>/wiki/testlink</div>
+          </div>
+        </div>
+        <webview id="webview" class="webpage" src="http://www.google.com/" preload="./inject.js" autosize="on"></webview>
+      </div>
 
     </div>
 

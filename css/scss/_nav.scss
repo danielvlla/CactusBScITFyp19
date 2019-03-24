@@ -1,48 +1,3 @@
-.navbtn {
-  color: $blue;
-  cursor: pointer;
-  font-size: 20px;
-  border: 15px solid $white;
-  border-radius: 20px;
-  background-color: $offerwhite;
-  width: 15%;
-  font-size: 20px;
-  transition: $dwellTime;
-  outline: none;
-  overflow: hidden;
-  position: relative;
-
-  &:before {
-    content: '';
-    background: $darkblue;
-    width: 5em;
-    height: 5em;
-    display: inline-block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: {
-      left: (5em / -2);
-      top: (5em / -2);
-    }
-    border-radius: 50%;
-    opacity: 0;
-    transform: scale(1);
-    transition:
-      opacity $dwellTime cubic-bezier(0,0,.2,1),
-      transform $dwellTime cubic-bezier(0,0,.2,1);
-  }
-
-  &:hover {
-    color: $darkblue;
-    background-color: $offwhite-3;
-    &:before {
-      opacity: 0.6;
-      transform: scale(0);
-    }
-  }
-}
-
 #navbar {
   display: flex;
   width: 100%;
@@ -54,7 +9,7 @@
   box-sizing: border-box;
 
   #backOrForwardBtn {
-    @extend .navbtn;
+    @extend .dwellBtn;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,7 +24,7 @@
   }
 
   #menuBtn  {
-    @extend .navbtn;
+    @extend .dwellBtn;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,8 +36,8 @@
     align-content: space-between;
     justify-content: center;
     align-items: center;
-    color: $blue;
-    background-color: $offerwhite;
+    color: $blue-2;
+    background-color: $blue-light;
     margin: 15px;
     border-radius: 10px;
     cursor: pointer;
@@ -98,8 +53,8 @@
       width: 90%;
       border-radius: 5px;
       font-size: 18px;
-      color: $blue;
-      background-color : $offerwhite;
+      color: $blue-2;
+      background-color : $blue-light;
       cursor: pointer;
       transition: $dwellTime;
     }
@@ -126,16 +81,16 @@
     }
 
     &:hover {
-      color: $darkblue;
-      background-color: $offwhite-3;
+      color: $blue-light;
+      background-color: $blue-2;
       &:before {
         opacity: 0.6;
         transform: scale(0);
       }
 
       input {
-        color: $darkblue;
-        background-color: $offwhite-3;
+        color: $blue-light;
+        background-color: $blue-2;
       }
     }
 

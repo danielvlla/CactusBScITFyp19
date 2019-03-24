@@ -1,6 +1,7 @@
 body {
   height: 100%;
   display: block;
+  font-family: 'Roboto', sans-serif;
 }
 
 ::placeholder {
@@ -11,12 +12,14 @@ body {
   position: relative;
 }
 
+#webview-container {
+  display: grid;
+  grid-template-columns: 15% auto;
+}
+
 .webpage {
-  position: absolute;
+  grid-column-start: 2 / span 1;
   top: 0;
-  left: 0;
-  right: 0;
   bottom: 0;
-  width: 100%;
   height: calc(100vh - #{$navHeight});
 }

@@ -1,46 +1,49 @@
-const { app, BrowserWindow } = require('electron')
-const { ipcMain } = require('electron')
+const { app, BrowserWindow, BrowserView, webContents, ipcMain } = require('electron')
+const path = require('path')
+const url = require('url')
 
 let mainWindow
+let view
+// const iconPath = path.join(__dirname, 'logo.png')
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ nodeIntegration: true, webviewTag: true })
-  // secondaryWindow = new BrowserWindow({ parent: mainWindow, frame: false, modal: true, show: false })
+  mainWindow = new BrowserWindow({ 
+    nodeIntegration: false, 
+    nodeIntegrationInWorker: false,
+    contextIsolation: true,
+    webviewTag: true,
+    preload: path.join(__dirname, 'preload.js'),
+    icon: __dirname + '/AppIcon.icns'
+  })
+
   mainWindow.maximize();
-
-  mainWindow.loadFile('index.html')
-  // secondaryWindow.loadURL('www.um.edu.mt')
-
-  // mainWindow.webContents.openDevTools()
+  mainWindow.loadURL('file://' + __dirname + '/index.html')
 
   mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element.
     mainWindow = null
   })
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
+app.on('web-contents-created', (event, contents) => {
+  contents.on('will-attach-webview', (event, webPreferences, params) => {
+    webPreferences.nodeIntegration = false
+  })
+})
+
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow()
   }
 })
 
 ipcMain.on('getLink', (event, message) => {
-  // console.log(message)
   mainWindow.webContents.send('getLink', message)
 })
