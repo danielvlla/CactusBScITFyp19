@@ -9,7 +9,7 @@ function getLinks() {
 }
 
 class Link {
-  constructor(x, y, top, left, bottom, right, width, height) {
+  constructor(x, y, top, left, bottom, right, width, height, centerX, centerY) {
     this.x = x
     this.y = y
     this.top = top
@@ -18,6 +18,8 @@ class Link {
     this.right = right
     this.width = width
     this.height = height
+    this.centerX = centerX
+    this.centerY = centerY
   }
 }
 
@@ -30,10 +32,10 @@ class Rectangle {
   }
 
   contains(link) {
-    return (link.x > this.x - this.width &&
-      link.x < this.x + this.width &&
-      link.y > this.y - this.height &&
-      link.y < this.y +this.height)
+    return (link.centerX > this.x - this.width/2 &&
+      link.centerX < this.x + this.width/2 &&
+      link.centerY > this.y - this.height/2 &&
+      link.centerY < this.y +this.height/2)
   }
 }
 

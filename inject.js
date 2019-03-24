@@ -33,7 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
       linkBounds.bottom,
       linkBounds.right,
       linkBounds.width,
-      linkBounds.height
+      linkBounds.height,
+      linkBounds.x + linkBounds.width/2,
+      linkBounds.y + linkBounds.height/2
     )
     qTree.insert(linkCoordinates)
   }
