@@ -1,15 +1,5 @@
-let linksArray = []
-
-function getLinks() {
-  const links = document.querySelectorAll('a')
-  for (var i=0; i<links.length; i++) {
-    const linkBounds = links[i].getBoundingClientRect()
-    linksArray.push(linkBounds)
-  }
-}
-
 class Link {
-  constructor(x, y, top, left, bottom, right, width, height, centerX, centerY) {
+  constructor(x, y, top, left, bottom, right, width, height, centerX, centerY, url, title) {
     this.x = x
     this.y = y
     this.top = top
@@ -20,6 +10,7 @@ class Link {
     this.height = height
     this.centerX = centerX
     this.centerY = centerY
+    this.url = url
   }
 }
 
@@ -36,6 +27,13 @@ class Rectangle {
       link.centerX < this.x + this.width/2 &&
       link.centerY > this.y - this.height/2 &&
       link.centerY < this.y +this.height/2)
+  }
+
+  intersects(range) {
+    return !(range.x - range.width > this.x + this.width ||
+      range.x + range.width < this.x - this.width ||
+      range.y - range.height > this.y + this.height ||
+      range.y + range.height < this.y - this.height)
   }
 }
 
@@ -66,22 +64,52 @@ class QuadTree {
 
   insert(link) {
     if (!this.boundary.contains(link)) {
-      return
+      return false
     }
 
     if (this.links.length < this.capacity) {
       this.links.push(link)
+      return true
     } else {
       if (!this.divided) {
         this.subdivide()
         this.divided = true
       }
 
-      this.northeast.insert(link)
-      this.northwest.insert(link)
-      this.southeast.insert(link)
-      this.southwest.insert(link)
+      if (this.northeast.insert(link)) {
+        return true
+      } else if (this.northwest.insert(link)) {
+        return true
+      } else if (this.southeast.insert(link)) {
+        return true
+      } else if (this.southwest.insert(link)) {
+        return true
+      }
     }
+  }
+
+  query(range, found) {    
+    if (!found) {
+      found = []
+    }
+
+    if (!this.boundary.intersects(range)) {
+      return
+    } else {
+      for (let l of this.links) {
+        if (range.contains(l)) {
+          found.push(l)
+        }
+      }
+
+      if (this.divided) {
+        this.northwest.query(range, found)
+        this.northeast.query(range, found)
+        this.southwest.query(range, found)
+        this.southeast.query(range, found)
+      }
+     }
+     return found
   }
 }
 
