@@ -44,6 +44,6 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.on('getLink', (event, message) => {
-  mainWindow.webContents.send('getLink', message)
+ipcMain.on('getLinks', (event, message) => {
+  mainWindow.webContents.send('getLinks', message)
 })

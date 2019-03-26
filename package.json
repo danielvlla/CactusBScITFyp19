@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "eslint": "^5.15.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "underscore": "^1.9.1"
   }
 }

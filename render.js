@@ -307,6 +307,8 @@ dwell(bookmarkOmniBtn, () => {
 })
 
 webview.addEventListener('dom-ready', () => {
+
+  // Insert CSS to Webview
   var head = document.getElementsByTagName('head')[0]
   var linkToWebviewCss = head.children[4].href
 
@@ -315,12 +317,10 @@ webview.addEventListener('dom-ready', () => {
     var cssContent = String(css)
     webview.insertCSS(cssContent)
   })
-
-  webview.send('listenLinks')
 })
 
-ipcRenderer.on('getLink', (event, message) => {
-  webview.src = message
+ipcRenderer.on('getLinks', (event, message) => {
+  console.log(message)
 })
 
 function readFile(file, callback) {

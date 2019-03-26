@@ -1,14 +1,14 @@
-const { ipcRenderer }               = require('electron')
-const cursor                        = require('./js/cursor.js')
-const { Link, Rectangle, QuadTree } = require('./js/quadtree')
-const { debounce }                  = require('./js/utils')
+const { ipcRenderer }                = require('electron')
+const { createCursor, followCursor } = require('./js/cursor.js')
+const { Link, Rectangle, QuadTree }  = require('./js/quadtree')
+const { debounce }                   = require('underscore')
 
 var c
 
 document.addEventListener('DOMContentLoaded', () => {
-  cursor.createCursor('cursor')
+  createCursor('cursor')
   c = document.querySelector('#cursor')
-  cursor.followCursor('cursor')
+  followCursor('cursor')
 
   let clientWidth = document.documentElement.clientWidth
   let clientHeight = document.documentElement.clientHeight
@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (linkBounds.x === 0 && linkBounds.y === 0 && linkBounds.width === 0 && linkBounds.height === 0) {
       continue
     }
+
+    if (!links[i].href ) {
+      continue
+    }
+
     let link = new Link(
       linkBounds.x,
       linkBounds.y,
@@ -43,21 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cursorLoc = c.getBoundingClientRect()
     let range = new Rectangle(cursorLoc.x, cursorLoc.y, 200, 200)
     let points = qTree.query(range)
-    for (let p of points ) {
-      console.log(p.url)
-    }
+
+    ipcRenderer.send('getLinks', points)
   }, 250)
 
   document.addEventListener('mousemove', queryTree)
-
-  console.log(qTree)
 })
-
-document.addEventListener('scroll', (e) => {
-  // Cursor does not work when scrolling
-})
-
-// ipcRenderer.on('listenLinks', () => {
-//   ipcRenderer.sendToHost(magneticPattern.getLinkOnDwell(c))
-// })
-
