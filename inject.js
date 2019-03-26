@@ -6,13 +6,15 @@ const { debounce }                   = require('underscore')
 var c
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Instantiate Cursor
   createCursor('cursor')
   c = document.querySelector('#cursor')
   followCursor('cursor')
 
+  // Instantiate Quad Tree
   let clientWidth = document.documentElement.clientWidth
   let clientHeight = document.documentElement.clientHeight
-
   let boundary = new Rectangle(clientWidth/2, clientHeight/2, clientWidth, clientHeight)
   let qTree = new QuadTree(boundary, 1)
   let links = document.getElementsByTagName('a')
@@ -27,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
       continue
     }
 
+    const linkTitle = links[i].title ? links[i].title : links[i].text.trim()
+
     let link = new Link(
       linkBounds.x,
       linkBounds.y,
@@ -39,12 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
       linkBounds.x + linkBounds.width/2,
       linkBounds.y + linkBounds.height/2,
       links[i].href,
-      links[i].title
+      linkTitle
     )
     qTree.insert(link)
   }
 
-  var queryTree = debounce(function queryTree() {
+  var getLinksFromQuadTree = debounce(function queryTree() {
     cursorLoc = c.getBoundingClientRect()
     let range = new Rectangle(cursorLoc.x, cursorLoc.y, 200, 200)
     let points = qTree.query(range)
@@ -52,5 +56,5 @@ document.addEventListener('DOMContentLoaded', () => {
     ipcRenderer.send('getLinks', points)
   }, 250)
 
-  document.addEventListener('mousemove', queryTree)
+  document.addEventListener('mousemove', getLinksFromQuadTree)
 })

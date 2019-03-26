@@ -1,6 +1,7 @@
-const fs              = require('fs')
-const { ipcRenderer } = require('electron')
-const config          = require('./js/config.js')
+const fs                        = require('fs')
+const { ipcRenderer }           = require('electron')
+const { byId, readFile, dwell } = require('./js/utils')
+const { union }                 = require('underscore')
 
 var back, forward, backOrForward, omni, omnibox, webview;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
@@ -9,10 +10,6 @@ var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, ca
 var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
 var scrollUpBtn, scrollDownBtn;
 var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon;
-
-var byId = (id) => {
-  return document.getElementById(id);
-}
 
 back = byId('backBtn')
 forward = byId('forwardBtn')
@@ -31,7 +28,7 @@ webview.addEventListener('dom-ready', () => {
 
 back.onclick = goBack
 forward.onclick = goForward
-omni.addEventListener('keydown', sanitiseUrl)
+omni.onkeydown = sanitiseUrl
 omni.onclick = displayUrl
 webview.addEventListener('did-start-loading', loadingOmnibox)
 webview.addEventListener('dom-ready', scroller())
@@ -102,7 +99,6 @@ function displayUrl() {
 }
 
 function scroller() {
-  var timeoutSroll;
   scrollUpBtn.onmouseover = () => {
     timeoutScroll = setInterval(() => {
       webview.executeJavaScript('document.documentElement.scrollBy(0, -10)');
@@ -128,20 +124,6 @@ function scroller() {
   }
 }
 
-// ============= DWELL =============
-let dwellTime = config.dwellTime;
-
-var dwell = (elem, callback) => {
-  let timeout = null
-  elem.onmouseover = () => {
-    timeout = setTimeout(callback, dwellTime)
-  };
-
-  elem.onmouseout = () => {
-    clearTimeout(timeout)
-  }
-};
-
 // ======== HIDE ALL OVERLAYS ========
 
 function hideAllOverlays() {
@@ -162,9 +144,7 @@ forwardNavBtn = byId('goForwardBtn')
 overlayNav = byId('overlay-nav')
 
 dwell(backOrForward, () => {
-
   hideAllOverlays()
-
   if(!webview.canGoBack() && webview.canGoForward()) {
     overlayNav.id = 'overlay-nav-forward-only'
     backNavBtn.style.display = 'none'
@@ -307,11 +287,9 @@ dwell(bookmarkOmniBtn, () => {
 })
 
 webview.addEventListener('dom-ready', () => {
-
   // Insert CSS to Webview
   var head = document.getElementsByTagName('head')[0]
   var linkToWebviewCss = head.children[4].href
-
   readFile(linkToWebviewCss, (css, err) => {
     if (err) throw error
     var cssContent = String(css)
@@ -319,20 +297,51 @@ webview.addEventListener('dom-ready', () => {
   })
 })
 
+// ======== SIDEBAR ========
+let linksSidebar = []
+const maxLinksInSidebar = 5
+const lengthUrl = 30
+const lengthTitle = 22
+let sidebar = byId('sidebar_items')
+
 ipcRenderer.on('getLinks', (event, message) => {
-  console.log(message)
-})
 
-function readFile(file, callback) {
-  var rawFile = new XMLHttpRequest()
-  rawFile.open("GET", file, true)
+  if (!linksSidebar) {
+    linksSidebar = message
+  } else if (linksSidebar.length < maxLinksInSidebar) {
+    // list of unique items in order
+    linksSidebar = union(linksSidebar, message)
 
-  rawFile.onreadystatechange = (e) => {
-    if(rawFile.readyState === 4) {
-      if(rawFile.status === 200 || rawFile.status == 0) {
-        callback(rawFile.responseText, null)
-      }
+    if (linksSidebar.length > maxLinksInSidebar) {
+      // FIFO
+      linksSidebar.slice(0, maxLinksInSidebar)
     }
   }
-  rawFile.send(null)
-}
+  
+  const markup = `${linksSidebar.map(link =>
+    `<div class='sidebar_item'>
+      <div class='sidebar_item_title'>
+        ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+      </div>
+      <div class='sidebar_item_link' data-link='${link.url}'>
+        ${link.url.length <= lengthUrl ? link.url : link.url.substring(0, lengthUrl)+'...'}
+      </div>
+    </div>
+    `).join('')}`
+
+  sidebar.innerHTML = markup
+
+
+  var sidebarItems = document.getElementsByClassName('sidebar_item')
+
+  for (var i=0; i < sidebarItems.length; i++) {
+    const sidebarItem = sidebarItems[i]
+    
+    dwell(sidebarItem, () => {
+      const link = sidebarItem.lastElementChild.getAttribute('data-link')
+      webview.src = link
+    })
+  }
+
+  // Send back linksInSidebar to inject.js so that the links will be highlighted in DOM
+})

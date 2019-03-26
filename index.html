@@ -127,14 +127,24 @@
       </div>
 
       <div id='webview-container'>
+
         <div id='sidebar'>
-          <div id='sidebar_title'>Link Navigation</div>
-          <div id='sidebar_subtitle'>Links will appear here as you read content.</div>
-          <div id='sidebar_item'>
-            <div id='sidebar_item_title'>Sample Title</div>
-            <div id='sidebar_item_link'>/wiki/testlink</div>
+
+          <div id='sidebar_header'>
+            <div id='sidebar_header_icon'>
+              <span class="fa-stack fa-2x">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-link fa-stack-1x fa-inverse"></i>
+              </span>
+            </div>
+            <div id='sidebar_header_title'>Links</div>
+          </div>
+          
+          <div id='sidebar_items'>
+            <!-- Links Rendered Here -->
           </div>
         </div>
+
         <webview id="webview" class="webpage" src="http://www.google.com/" preload="./inject.js" autosize="on"></webview>
       </div>
 

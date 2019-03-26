@@ -11,6 +11,7 @@ class Link {
     this.centerX = centerX
     this.centerY = centerY
     this.url = url
+    this.title = title
   }
 }
 

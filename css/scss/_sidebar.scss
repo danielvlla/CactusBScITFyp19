@@ -3,6 +3,7 @@
   top: 0;
   left: 0;
   height: calc(100vh - #{$navHeight});
+  width: 99%;
   background-color: $white;
   border-right: 1px solid $lightgrey;
   display: flex;
@@ -10,43 +11,60 @@
   justify-content: flex-start;
   overflow: hidden;
   align-items: flex-start;
-  padding: 30px;
   text-align: left;
 
-  &_title {
-    color: $black;
-    font-size: 1.5em;
-    margin-bottom: 10px;
-  }
-
-  &_subtitle {
-    color: $grey;
-    font-size: 0.8em;
-    padding-bottom: 25px;
+  &_header {
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid $lightgrey;
-    margin-bottom: 25px;
+    width: 80%;
+    padding: 20px 30px;
+
+    &_icon {
+      font-size: 0.4em;
+      color: $blue-2;
+      margin-right: 20px;
+    }
+
+    &_title {
+      color: $black;
+      font-size: 1.2em;
+    }
   }
 
+  &_items {
+    width: 100%;
+  }
+}
+
+.sidebar {
   &_item {
     @extend .dwellBtn;
-    height: 40px;
-    width: 100%;
+    display: flex;
+    height: 50px;
+    width: 80%;
     padding: 10px;
     border: none;
     border-radius: 8px;
+    margin: 20px 10px;
+    flex-direction: column;
+    align-content: center;
 
-    &_title {
-      font-size: 0.9em;
-    }
+  &_title {
+    font-size: 0.8em;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+  }
 
-    &_link {
-      opacity: 0.4;
-      margin-top: 3px;
-      font-size: 0.7em;
-    }
+  &_link {
+    opacity: 0.4;
+    margin-top: 3px;
+    font-size: 0.6em;
+    word-wrap: break-word;
+  }
 
-    &:hover {
-      color: $white;
-    }
+  &:hover {
+    color: $white;
+  }
   }
 }
