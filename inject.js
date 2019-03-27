@@ -1,7 +1,7 @@
 const { ipcRenderer }                = require('electron')
 const { createCursor, followCursor } = require('./js/cursor.js')
 const { Link, Rectangle, QuadTree }  = require('./js/quadtree')
-const { debounce }                   = require('underscore')
+const { debounce }                   = require('lodash')
 
 var c
 
@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       continue
     }
 
+    // If title is set, set to title, if not get text from anchor tag
     const linkTitle = links[i].title ? links[i].title : links[i].text.trim()
 
     let link = new Link(
@@ -53,7 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let range = new Rectangle(cursorLoc.x, cursorLoc.y, 200, 200)
     let points = qTree.query(range)
 
-    ipcRenderer.send('getLinks', points)
+    if (Array.isArray(points) && points.length) {
+      ipcRenderer.send('getLinks', points)
+    }
   }, 250)
 
   document.addEventListener('mousemove', getLinksFromQuadTree)

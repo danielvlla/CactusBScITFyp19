@@ -1,7 +1,7 @@
 const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
-const { union }                 = require('underscore')
+const { union, unionWith, isEqual, drop, take, difference }                 = require('lodash')
 
 var back, forward, backOrForward, omni, omnibox, webview;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
@@ -51,7 +51,7 @@ function sanitiseUrl (event) {
 }
 
 // =================================
-// BROWSER FUNCTIONALITY
+// Browser Functionality
 // =================================
 function reload() {
   hideAllOverlays()
@@ -298,50 +298,73 @@ webview.addEventListener('dom-ready', () => {
 })
 
 // ======== SIDEBAR ========
-let linksSidebar = []
-const maxLinksInSidebar = 5
+
+let linksInSidebar = []
+let linksToShow = []
+
+const sidebarMaxLinks = 4
 const lengthUrl = 30
-const lengthTitle = 22
+const lengthTitle = 20
 let sidebar = byId('sidebar_items')
 
 ipcRenderer.on('getLinks', (event, message) => {
+  console.log("START")
+  let numberOfLinksToDelete = 0
 
-  if (!linksSidebar) {
-    linksSidebar = message
-  } else if (linksSidebar.length < maxLinksInSidebar) {
-    // list of unique items in order
-    linksSidebar = union(linksSidebar, message)
+  var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
+  if (sidebarItems.length) {
+    linksInSidebar = sidebarItems.map(item => `${item.lastElementChild.getAttribute('data-link')}`)
+  }
 
-    if (linksSidebar.length > maxLinksInSidebar) {
-      // FIFO
-      linksSidebar.slice(0, maxLinksInSidebar)
+  if (!linksInSidebar.length) {
+    linksToShow = message
+  } else if (isEqual(linksInSidebar, message)) {
+    linksToShow = []
+  } else if (message.length > sidebarMaxLinks) {
+    // Do something in this case, eg. expand sidebar
+  } else if (linksInSidebar.length + message.length <= sidebarMaxLinks) {
+    linksToShow = unionWith(linksInSidebar, message, isEqual)
+  } else if (isEqual(message.length, sidebarMaxLinks)) {
+    linksToShow = message
+  } else {
+    numberOfLinksToDelete = (linksInSidebar.length + message.length) - sidebarMaxLinks
+    if (numberOfLinksToDelete <= linksInSidebar.length) {
+      linksToShow = unionWith(drop(linksInSidebar, numberOfLinksToDelete), message, isEqual)
     }
   }
-  
-  const markup = `${linksSidebar.map(link =>
-    `<div class='sidebar_item'>
-      <div class='sidebar_item_title'>
-        ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
-      </div>
-      <div class='sidebar_item_link' data-link='${link.url}'>
-        ${link.url.length <= lengthUrl ? link.url : link.url.substring(0, lengthUrl)+'...'}
-      </div>
-    </div>
-    `).join('')}`
 
-  sidebar.innerHTML = markup
-
-
-  var sidebarItems = document.getElementsByClassName('sidebar_item')
-
-  for (var i=0; i < sidebarItems.length; i++) {
-    const sidebarItem = sidebarItems[i]
-    
-    dwell(sidebarItem, () => {
-      const link = sidebarItem.lastElementChild.getAttribute('data-link')
-      webview.src = link
-    })
+  if (numberOfLinksToDelete) {
+    for (var i=0; i < numberOfLinksToDelete; i++) {
+      sidebarItems[i].parentNode.removeChild(sidebarItems[i])
+      drop(linksInSidebar, numberOfLinksToDelete)
+    }
   }
 
-  // Send back linksInSidebar to inject.js so that the links will be highlighted in DOM
+  console.log(linksToShow)
+  // Displaying Links
+  if (linksToShow.length) {
+    const markup = `${linksToShow.map(link =>
+      `<div class='sidebar_item'>
+        <div class='sidebar_item_title'>
+          ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+        </div>
+        <div class='sidebar_item_link' data-link='${link.url}'>
+          ${link.url.length <= lengthUrl ? link.url : link.url.substring(0, lengthUrl)+'...'}
+        </div>
+      </div>
+      `).join('')}`
+
+    sidebar.insertAdjacentHTML('beforeend', markup);
+  }
+
+  // Dwell Functionality for Sidebar
+  if (sidebarItems) {
+    for (var i=0; i < sidebarItems.length; i++) {
+      dwell(sidebarItems[i], () => {
+        const link = sidebarItems[i].lastElementChild.getAttribute('data-link')
+        webview.src = link
+      })
+    }
+  }
+
 })
