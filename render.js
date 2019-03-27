@@ -10,6 +10,7 @@ var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, ca
 var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
 var scrollUpBtn, scrollDownBtn;
 var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon;
+var timeoutScroll
 
 back = byId('backBtn')
 forward = byId('forwardBtn')
@@ -224,7 +225,7 @@ dwell(cancelOmniBtn, () => {
 })
 
 // ======== OPTIONS OVERLAY ========
-options = byId('menuBtn')
+var options = byId('menuBtn')
 cancelOptionsBtn = byId('cancel-options')
 
 dwell(options, () => {
@@ -259,7 +260,7 @@ dwell(bookmarkOmniBtn, () => {
 
       if (!exists) {
         bookmarks.bookmarks.push(bookmark)
-        bookmarksJson = JSON.stringify(bookmarks)
+        let bookmarksJson = JSON.stringify(bookmarks)
         fs.writeFile('bookmarks.json', bookmarksJson, 'utf8', (err) => {
           if (err) throw err
         })
@@ -291,7 +292,7 @@ webview.addEventListener('dom-ready', () => {
   var head = document.getElementsByTagName('head')[0]
   var linkToWebviewCss = head.children[4].href
   readFile(linkToWebviewCss, (css, err) => {
-    if (err) throw error
+    if (err) throw err
     var cssContent = String(css)
     webview.insertCSS(cssContent)
   })
@@ -301,6 +302,7 @@ webview.addEventListener('dom-ready', () => {
 
 let linksInSidebar = []
 let linksToShow = []
+let allLinksReceived = []
 
 const sidebarMaxLinks = 4
 const lengthUrl = 30
@@ -309,13 +311,20 @@ let sidebar = byId('sidebar_items')
 
 ipcRenderer.on('getLinks', (event, message) => {
   console.log("START")
+  allLinksReceived.push(...message)
   let numberOfLinksToDelete = 0
 
   var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
   if (sidebarItems.length) {
-    linksInSidebar = sidebarItems.map(item => `${item.lastElementChild.getAttribute('data-link')}`)
+    let sidebarUrls = sidebarItems.map(item => `${item.lastElementChild.getAttribute('data-link')}`)
+    for (var i=0; i < sidebarUrls.length; i++) {
+      var sidebarLink = allLinksReceived.find(link => link.url === sidebarUrls[i])
+      if (sidebarLink) {
+        linksInSidebar.push(sidebarLink)
+      }
+    }
   }
-
+  
   if (!linksInSidebar.length) {
     linksToShow = message
   } else if (isEqual(linksInSidebar, message)) {
@@ -340,7 +349,6 @@ ipcRenderer.on('getLinks', (event, message) => {
     }
   }
 
-  console.log(linksToShow)
   // Displaying Links
   if (linksToShow.length) {
     const markup = `${linksToShow.map(link =>

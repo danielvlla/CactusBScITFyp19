@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   var getLinksFromQuadTree = debounce(function queryTree() {
-    cursorLoc = c.getBoundingClientRect()
+    let cursorLoc = c.getBoundingClientRect()
     let range = new Rectangle(cursorLoc.x, cursorLoc.y, 200, 200)
     let points = qTree.query(range)
 
