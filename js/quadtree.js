@@ -1,5 +1,5 @@
 class Link {
-  constructor(x, y, top, left, bottom, right, width, height, centerX, centerY, url, title) {
+  constructor(x, y, top, left, bottom, right, width, height, centerX, centerY, url, title, id) {
     this.x = x
     this.y = y
     this.top = top
@@ -12,6 +12,7 @@ class Link {
     this.centerY = centerY
     this.url = url
     this.title = title
+    this.id = id
   }
 }
 

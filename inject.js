@@ -2,11 +2,11 @@ const { ipcRenderer }                = require('electron')
 const { createCursor, followCursor } = require('./js/cursor.js')
 const { Link, Rectangle, QuadTree }  = require('./js/quadtree')
 const { debounce }                   = require('lodash')
+const { genId }                      = require('./js/utils')
 
 var c
 
 document.addEventListener('DOMContentLoaded', () => {
-
   // Instantiate Cursor
   createCursor('cursor')
   c = document.querySelector('#cursor')
@@ -17,9 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let clientHeight = document.documentElement.clientHeight
   let boundary = new Rectangle(clientWidth/2, clientHeight/2, clientWidth, clientHeight)
   let qTree = new QuadTree(boundary, 1)
-  let links = document.getElementsByTagName('a')
 
+  let links = document.getElementsByTagName('a')
   for (var i = 0; i < links.length; i++) {
+    links[i].classList.add('linkMark')
+    links[i].id = genId()
+
     let linkBounds = links[i].getBoundingClientRect()
     if (linkBounds.x === 0 && linkBounds.y === 0 && linkBounds.width === 0 && linkBounds.height === 0) {
       continue
@@ -44,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
       linkBounds.x + linkBounds.width/2,
       linkBounds.y + linkBounds.height/2,
       links[i].href,
-      linkTitle
+      linkTitle,
+      links[i].id
     )
     qTree.insert(link)
   }
@@ -61,3 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mousemove', getLinksFromQuadTree)
 })
+
+// ipcRenderer.on('highlightLinks', (event, message) => {
+//   console.log('FROM INJECT')
+//   for (var i=0; i < message.length; i++) {
+//     document.getElementById(message[i]).classList.add('linkVisualise')
+//   }
+// })

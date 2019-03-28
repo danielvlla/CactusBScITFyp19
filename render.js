@@ -1,7 +1,7 @@
 const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
-const { union, unionWith, isEqual, drop, differenceWith }                 = require('lodash')
+const { isEqual, drop, differenceWith }                 = require('lodash')
 const Config = require('./js/config')
 
 var back, forward, backOrForward, omni, omnibox, webview;
@@ -24,14 +24,9 @@ dialogSuccessIcon = byId('dialogSuccess')
 scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
 
-// webview.addEventListener('dom-ready', () => {
-//   webview.openDevTools();
-// })
-
-document.addEventListener('dom-ready', () => {
-  document.openDevTools();
+webview.addEventListener('dom-ready', () => {
+  webview.openDevTools();
 })
-
 
 back.onclick = goBack
 forward.onclick = goForward
@@ -319,7 +314,7 @@ ipcRenderer.on('getLinks', (event, message) => {
   let linksToShow = []
   let numberOfLinksToDelete = 0
 
-  var sidebarItems = Array.from(document.querySelectorAll('.sidebar_item'))
+  var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
   if (sidebarItems.length) {
     let sidebarUrls = sidebarItems.map(item => `${item.lastElementChild.getAttribute('data-link')}`)
     for (var i=0; i < sidebarUrls.length; i++) {
@@ -357,7 +352,7 @@ ipcRenderer.on('getLinks', (event, message) => {
   // Displaying Links
   if (linksToShow.length) {
     const markup = `${linksToShow.map(link =>
-      `<div class='sidebar_item'>
+      `<div class='sidebar_item' id='${link.id}'>
         <div class='sidebar_item_title'>
           ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
         </div>
@@ -371,14 +366,26 @@ ipcRenderer.on('getLinks', (event, message) => {
     linksToShow = []
   }
 
-  // Dwell Functionality for Sidebar
-  if (sidebarItems) {
-    for (var i=0; i < sidebarItems.length; i++) {
+  sidebarItems = document.querySelectorAll('.sidebar_item')
+  if (sidebarItems.length) {
+    // let linkIds = []
+
+    console.log(sidebarItems)
+    for (i=0; i < sidebarItems.length; i++) {
+      
+      // linkIds.push(sidebarItems[i].id)
+
       dwell(sidebarItems[i], () => {
-        const link = sidebarItems[i].lastElementChild.getAttribute('data-link')
+        let link = ''
+        for (i=0; i< sidebarItems.length; i++) {
+          link = sidebarItems[i].lastElementChild.getAttribute('data-link')
+        }
         webview.src = link
       })
     }
-  }
 
+    // if (linkIds.length) {
+    //   ipcRenderer.sendToHost(linkIds)
+    // }
+  }
 })

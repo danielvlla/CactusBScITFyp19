@@ -9,6 +9,7 @@ a, input, button, div  {
   cursor: none !important;
 }
 
+// Magnetic Pattern
 .linkMarker {
   position: relative;
 
@@ -33,4 +34,16 @@ a, input, button, div  {
   &:after {
     width: 100%;
   }
+}
+
+// QuadTree Pattern
+.linkMark {
+  position: relative;
+  // background-color: transparent;
+}
+
+.linkVisualise {
+  color: $green !important;
+  background-color: lighten($green, 50%) !important;
+  border-radius: 5px;
 }

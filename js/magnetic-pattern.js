@@ -49,8 +49,8 @@ module.exports = {
           enteredLink = el
           enteredBounds = setDistance(elBounds)
           
-          stopAtY = elBounds.top + (elBounds.height / 2)
-          stopAtX = elBounds.left + (elBounds.width / 2)
+          var stopAtY = elBounds.top + (elBounds.height / 2)
+          var stopAtX = elBounds.left + (elBounds.width / 2)
           cursor.stopCursor('cursor', stopAtX, stopAtY)
           stoppedCursor = 1
           cursor.followCursor('hiddenCursor')

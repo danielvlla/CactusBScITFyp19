@@ -22,7 +22,7 @@ module.exports = {
   },
 
   dwell: (elem, callback) => {
-    let timeout = 0
+    var timeout = 0
     elem.onmouseover = () => {
       timeout = setTimeout(callback, dwellTime)
     };
@@ -30,5 +30,9 @@ module.exports = {
     elem.onmouseout = () => {
       clearTimeout(timeout)
     }
+  },
+
+  genId: () => {
+    return '_' + Math.random().toString(36).substr(2, 9)
   }
 }

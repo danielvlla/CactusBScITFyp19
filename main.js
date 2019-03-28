@@ -47,3 +47,8 @@ app.on('activate', () => {
 ipcMain.on('getLinks', (event, message) => {
   mainWindow.webContents.send('getLinks', message)
 })
+
+// ipcMain.on('highlightLinks', (event, message) => {
+//   console.log('FROM MAIN')
+//   event.sender.send('highlightLinks', message)
+// })
