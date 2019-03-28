@@ -325,21 +325,28 @@ ipcRenderer.on('getLinks', (event, message) => {
     }
   }
   
+  // if (!linksInSidebar.length) {
+  //   linksToShow = message
+  // } else if (isEqual(linksInSidebar, message)) {
+  //   linksToShow = []
+  // } else if (message.length > sidebarMaxLinks) {
+  //   // Do something in this case, eg. expand sidebar
+  // } else if (linksInSidebar.length + message.length <= sidebarMaxLinks) {
+  //   linksToShow = differenceWith(message, linksInSidebar, isEqual)
+  // } else if (isEqual(message.length, sidebarMaxLinks)) {
+  //   linksToShow = message
+  // } else if (message.length <= sidebarMaxLinks && (linksInSidebar.length + message.length) > sidebarMaxLinks) {
+  //   numberOfLinksToDelete = (linksInSidebar.length + message.length) - sidebarMaxLinks
+  //   if (numberOfLinksToDelete <= linksInSidebar.length) {
+  //     linksToShow = differenceWith(message, drop(linksInSidebar, numberOfLinksToDelete), isEqual)
+  //   }
+  // }
+
   if (!linksInSidebar.length) {
     linksToShow = message
-  } else if (isEqual(linksInSidebar, message)) {
-    linksToShow = []
-  } else if (message.length > sidebarMaxLinks) {
-    // Do something in this case, eg. expand sidebar
-  } else if (linksInSidebar.length + message.length <= sidebarMaxLinks) {
-    linksToShow = differenceWith(message, linksInSidebar, isEqual)
-  } else if (isEqual(message.length, sidebarMaxLinks)) {
+  } else {
+    numberOfLinksToDelete = linksInSidebar.length
     linksToShow = message
-  } else if (message.length <= sidebarMaxLinks && (linksInSidebar.length + message.length) > sidebarMaxLinks) {
-    numberOfLinksToDelete = (linksInSidebar.length + message.length) - sidebarMaxLinks
-    if (numberOfLinksToDelete <= linksInSidebar.length) {
-      linksToShow = differenceWith(message, drop(linksInSidebar, numberOfLinksToDelete), isEqual)
-    }
   }
 
   if (numberOfLinksToDelete && sidebarItems.length) {

@@ -6,6 +6,8 @@ const { genId }                      = require('./js/utils')
 
 var c
 
+let linksVisited = []
+
 document.addEventListener('DOMContentLoaded', () => {
   // Instantiate Cursor
   createCursor('cursor')
@@ -58,12 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let range = new Rectangle(cursorLoc.x, cursorLoc.y, 200, 200)
     let points = qTree.query(range)
 
+    for (var i=0; i<points.length;i++) {
+      document.getElementById(points[i].id).classList.add('linkVisualise')
+      linksVisited.push(points[i].id)
+    }
+
     if (Array.isArray(points) && points.length) {
       ipcRenderer.send('getLinks', points)
     }
+
   }, 250)
 
   document.addEventListener('mousemove', getLinksFromQuadTree)
+
+  for (var i=0; i<linksVisited.length;i++) {
+    document.getElementById(linksVisited[i].id).classList.remove('linkVisualise')
+    linksVisited.pop(linksVisited[i])
+  }
 })
 
 // ipcRenderer.on('highlightLinks', (event, message) => {
