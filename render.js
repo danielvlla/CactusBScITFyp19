@@ -1,7 +1,8 @@
 const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
-const { union, unionWith, isEqual, drop, take, difference }                 = require('lodash')
+const { union, unionWith, isEqual, drop, differenceWith }                 = require('lodash')
+const Config = require('./js/config')
 
 var back, forward, backOrForward, omni, omnibox, webview;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
@@ -23,9 +24,14 @@ dialogSuccessIcon = byId('dialogSuccess')
 scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
 
-webview.addEventListener('dom-ready', () => {
-  webview.openDevTools();
+// webview.addEventListener('dom-ready', () => {
+//   webview.openDevTools();
+// })
+
+document.addEventListener('dom-ready', () => {
+  document.openDevTools();
 })
+
 
 back.onclick = goBack
 forward.onclick = goForward
@@ -252,7 +258,7 @@ dwell(bookmarkOmniBtn, () => {
       var bookmarks = JSON.parse(data)
       var exists = false;
 
-      for(i=0; bookmarks.bookmarks.length > i; i++) {
+      for(var i=0; bookmarks.bookmarks.length > i; i++) {
         if (bookmarks.bookmarks[i].url === bookmark.url) {
           exists = true;
         }
@@ -300,21 +306,20 @@ webview.addEventListener('dom-ready', () => {
 
 // ======== SIDEBAR ========
 
-let linksInSidebar = []
-let linksToShow = []
 let allLinksReceived = []
 
-const sidebarMaxLinks = 4
+const sidebarMaxLinks = Config.sidebarMaxLinks
 const lengthUrl = 30
 const lengthTitle = 20
 let sidebar = byId('sidebar_items')
 
 ipcRenderer.on('getLinks', (event, message) => {
-  console.log("START")
   allLinksReceived.push(...message)
+  let linksInSidebar = []
+  let linksToShow = []
   let numberOfLinksToDelete = 0
 
-  var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
+  var sidebarItems = Array.from(document.querySelectorAll('.sidebar_item'))
   if (sidebarItems.length) {
     let sidebarUrls = sidebarItems.map(item => `${item.lastElementChild.getAttribute('data-link')}`)
     for (var i=0; i < sidebarUrls.length; i++) {
@@ -332,17 +337,17 @@ ipcRenderer.on('getLinks', (event, message) => {
   } else if (message.length > sidebarMaxLinks) {
     // Do something in this case, eg. expand sidebar
   } else if (linksInSidebar.length + message.length <= sidebarMaxLinks) {
-    linksToShow = unionWith(linksInSidebar, message, isEqual)
+    linksToShow = differenceWith(message, linksInSidebar, isEqual)
   } else if (isEqual(message.length, sidebarMaxLinks)) {
     linksToShow = message
-  } else {
+  } else if (message.length <= sidebarMaxLinks && (linksInSidebar.length + message.length) > sidebarMaxLinks) {
     numberOfLinksToDelete = (linksInSidebar.length + message.length) - sidebarMaxLinks
     if (numberOfLinksToDelete <= linksInSidebar.length) {
-      linksToShow = unionWith(drop(linksInSidebar, numberOfLinksToDelete), message, isEqual)
+      linksToShow = differenceWith(message, drop(linksInSidebar, numberOfLinksToDelete), isEqual)
     }
   }
 
-  if (numberOfLinksToDelete) {
+  if (numberOfLinksToDelete && sidebarItems.length) {
     for (var i=0; i < numberOfLinksToDelete; i++) {
       sidebarItems[i].parentNode.removeChild(sidebarItems[i])
       drop(linksInSidebar, numberOfLinksToDelete)
@@ -363,6 +368,7 @@ ipcRenderer.on('getLinks', (event, message) => {
       `).join('')}`
 
     sidebar.insertAdjacentHTML('beforeend', markup);
+    linksToShow = []
   }
 
   // Dwell Functionality for Sidebar
