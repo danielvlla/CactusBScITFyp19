@@ -10,13 +10,13 @@
   "license": "ISC",
   "devDependencies": {
     "devtron": "^1.4.0",
-    "electron": "^4.1.1",
     "eslint": "^5.15.3",
     "gulp": "^4.0.0",
     "gulp-sass": "^4.0.2",
     "node-sass": "^4.11.0"
   },
   "dependencies": {
+    "electron": "^4.1.2",
     "lodash": "^4.17.11",
     "path": "^0.12.7"
   }

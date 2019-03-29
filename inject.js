@@ -1,14 +1,15 @@
 const { ipcRenderer }                = require('electron')
 const { createCursor, followCursor } = require('./js/cursor.js')
 const { Link, Rectangle, QuadTree }  = require('./js/quadtree')
-const { debounce }                   = require('lodash')
-const { genId }                      = require('./js/utils')
+const { debounce, isEqual }                   = require('lodash')
+const { genId }             = require('./js/utils')
 
 var c
 
-let linksVisited = []
-
 document.addEventListener('DOMContentLoaded', () => {
+
+  let linksVisited = []
+
   // Instantiate Cursor
   createCursor('cursor')
   c = document.querySelector('#cursor')
@@ -55,28 +56,36 @@ document.addEventListener('DOMContentLoaded', () => {
     qTree.insert(link)
   }
 
-  var getLinksFromQuadTree = debounce(function queryTree() {
-    let cursorLoc = c.getBoundingClientRect()
-    let range = new Rectangle(cursorLoc.x, cursorLoc.y, 200, 200)
+  var getLinksFromQuadTree = debounce(function queryTree(cursorLocation) {
+    let range = new Rectangle(cursorLocation.x, cursorLocation.y, 200, 200)
     let points = qTree.query(range)
 
-    for (var i=0; i<points.length;i++) {
-      document.getElementById(points[i].id).classList.add('linkVisualise')
-      linksVisited.push(points[i].id)
-    }
-
     if (Array.isArray(points) && points.length) {
+      if (!isEqual(points, linksVisited)) {
+        
+        if (linksVisited.length) {
+          for (let i=0; i < linksVisited.length; i++) {
+            document.getElementById(linksVisited[i]).classList.remove('linkVisualise')
+          }
+          linksVisited = []
+        }
+
+        for (let i=0; i < points.length; i++) {
+          document.getElementById(points[i].id).classList.add('linkVisualise')
+          linksVisited.push(points[i].id)
+        }
+      }
+
       ipcRenderer.send('getLinks', points)
     }
 
   }, 250)
 
-  document.addEventListener('mousemove', getLinksFromQuadTree)
 
-  for (var i=0; i<linksVisited.length;i++) {
-    document.getElementById(linksVisited[i].id).classList.remove('linkVisualise')
-    linksVisited.pop(linksVisited[i])
-  }
+  document.addEventListener('mousemove', () => {
+    let cursorLoc = c.getBoundingClientRect()
+    getLinksFromQuadTree(cursorLoc)
+  })
 })
 
 // ipcRenderer.on('highlightLinks', (event, message) => {
