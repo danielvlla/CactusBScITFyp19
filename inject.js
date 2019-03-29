@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let links = document.getElementsByTagName('a')
   for (var i = 0; i < links.length; i++) {
+    if (isElementANavigationElement(links[i])) {
+      continue
+    }
     links[i].classList.add('linkMark')
     links[i].id = genId()
 
@@ -56,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     qTree.insert(link)
   }
 
-  var getLinksFromQuadTree = debounce(function queryTree(cursorLocation) {
+  var getLinksFromQuadTree = function queryTree(cursorLocation) {
     let range = new Rectangle(cursorLocation.x, cursorLocation.y, 200, 200)
     let points = qTree.query(range)
 
@@ -78,15 +81,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ipcRenderer.send('getLinks', points)
     }
+  }
 
-  }, 250)
-
-
-  document.addEventListener('mousemove', () => {
+  var getLinksFromCursorRange =  debounce(() => {
     let cursorLoc = c.getBoundingClientRect()
-    getLinksFromQuadTree(cursorLoc)
+    getLinksFromQuadTree(cursorLoc), 500
+  }, 500)
+
+  document.addEventListener('mousemove', getLinksFromCursorRange)
+
+  document.addEventListener('mouseleave', () => {
+    document.removeEventListener('mousemove', getLinksFromCursorRange)
+    getLinksFromCursorRange.cancel()
+  })
+
+  document.addEventListener('mouseenter', () => {
+    document.addEventListener('mousemove', getLinksFromCursorRange)
   })
 })
+
+function isElementANavigationElement(element) {
+  var parentNav = element.closest('nav')
+  var parentRoleNav = element.closest('div[role="navigation"]')
+
+  return (parentNav || parentRoleNav) ? true : false
+}
 
 // ipcRenderer.on('highlightLinks', (event, message) => {
 //   console.log('FROM INJECT')

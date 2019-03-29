@@ -28,7 +28,8 @@ exports.followCursor = (id) => {
 
   var cursorPos = { x: 0, y: 0 }
 
-  var interval = setInterval(followMouse, 50)
+  // Increase interval to make it slower
+  setInterval(followMouse, 30)
 
   function followMouse() {
     var distX = mouse.x - cursorPos.x
