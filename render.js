@@ -324,23 +324,6 @@ ipcRenderer.on('getLinks', (event, message) => {
       }
     }
   }
-  
-  // if (!linksInSidebar.length) {
-  //   linksToShow = message
-  // } else if (isEqual(linksInSidebar, message)) {
-  //   linksToShow = []
-  // } else if (message.length > sidebarMaxLinks) {
-  //   // Do something in this case, eg. expand sidebar
-  // } else if (linksInSidebar.length + message.length <= sidebarMaxLinks) {
-  //   linksToShow = differenceWith(message, linksInSidebar, isEqual)
-  // } else if (isEqual(message.length, sidebarMaxLinks)) {
-  //   linksToShow = message
-  // } else if (message.length <= sidebarMaxLinks && (linksInSidebar.length + message.length) > sidebarMaxLinks) {
-  //   numberOfLinksToDelete = (linksInSidebar.length + message.length) - sidebarMaxLinks
-  //   if (numberOfLinksToDelete <= linksInSidebar.length) {
-  //     linksToShow = differenceWith(message, drop(linksInSidebar, numberOfLinksToDelete), isEqual)
-  //   }
-  // }
 
   if (!linksInSidebar.length) {
     linksToShow = message
@@ -375,24 +358,14 @@ ipcRenderer.on('getLinks', (event, message) => {
 
   sidebarItems = document.querySelectorAll('.sidebar_item')
   if (sidebarItems.length) {
-    // let linkIds = []
-
-    console.log(sidebarItems)
     for (i=0; i < sidebarItems.length; i++) {
-      
-      // linkIds.push(sidebarItems[i].id)
-
-      dwell(sidebarItems[i], () => {
-        let link = ''
-        for (i=0; i< sidebarItems.length; i++) {
-          link = sidebarItems[i].lastElementChild.getAttribute('data-link')
-        }
-        webview.src = link
-      })
+      sidebarItems[i].addEventListener('mouseover', getLink)
     }
+  }
 
-    // if (linkIds.length) {
-    //   ipcRenderer.sendToHost(linkIds)
-    // }
+  function getLink() {
+    dwell(this, () => {
+      webview.src = this.lastElementChild.getAttribute('data-link')
+    })
   }
 })

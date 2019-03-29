@@ -1,5 +1,5 @@
 {
-  "name": "EyeBrowse",
+  "name": "eyebrowse",
   "version": "1.0.0",
   "description": "Gaze Interaction Browser",
   "main": "main.js",

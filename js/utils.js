@@ -11,7 +11,7 @@ module.exports = {
     var rawFile = new XMLHttpRequest()
     rawFile.open("GET", file, true)
   
-    rawFile.onreadystatechange = (e) => {
+    rawFile.onreadystatechange = () => {
       if(rawFile.readyState === 4) {
         if(rawFile.status === 200 || rawFile.status == 0) {
           callback(rawFile.responseText, null)

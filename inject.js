@@ -1,8 +1,8 @@
 const { ipcRenderer }                = require('electron')
 const { createCursor, followCursor } = require('./js/cursor.js')
 const { Link, Rectangle, QuadTree }  = require('./js/quadtree')
-const { debounce, isEqual }                   = require('lodash')
-const { genId }             = require('./js/utils')
+const { debounce, isEqual }          = require('lodash')
+const { genId }                      = require('./js/utils')
 
 var c
 
@@ -106,10 +106,3 @@ function isElementANavigationElement(element) {
 
   return (parentNav || parentRoleNav) ? true : false
 }
-
-// ipcRenderer.on('highlightLinks', (event, message) => {
-//   console.log('FROM INJECT')
-//   for (var i=0; i < message.length; i++) {
-//     document.getElementById(message[i]).classList.add('linkVisualise')
-//   }
-// })
