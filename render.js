@@ -1,13 +1,13 @@
 const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
-const { isEqual, drop, differenceWith }                 = require('lodash')
-const Config = require('./js/config')
+const { drop }                  = require('lodash')
+// const Config                    = require('./js/config')
 
 var back, forward, backOrForward, omni, omnibox, webview;
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
-var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, newUrlOmniBtn, tabsOmniBtn, closeOmniBtn, cancelOmniBtn;
-var overlayOptions, bookmarksBtn, zoomLevel, zoomInBtn, zoomOutBtn, aboutBtn, cancelOptionsBtn;
+var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, cancelOmniBtn;
+var overlayOptions, cancelOptionsBtn;
 var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
 var scrollUpBtn, scrollDownBtn;
 var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon;
@@ -248,7 +248,7 @@ dwell(bookmarkOmniBtn, () => {
     var bookmark = { url: webview.src, name: webview.getTitle() };
 
     if (err) {
-      console.log(err)
+      return err
     } else {
       var bookmarks = JSON.parse(data)
       var exists = false;
@@ -303,7 +303,7 @@ webview.addEventListener('dom-ready', () => {
 
 let allLinksReceived = []
 
-const sidebarMaxLinks = Config.sidebarMaxLinks
+// const sidebarMaxLinks = Config.sidebarMaxLinks
 const lengthUrl = 30
 const lengthTitle = 20
 let sidebar = byId('sidebar_items')
@@ -333,7 +333,7 @@ ipcRenderer.on('getLinks', (event, message) => {
   }
 
   if (numberOfLinksToDelete && sidebarItems.length) {
-    for (var i=0; i < numberOfLinksToDelete; i++) {
+    for (i=0; i < numberOfLinksToDelete; i++) {
       sidebarItems[i].parentNode.removeChild(sidebarItems[i])
       drop(linksInSidebar, numberOfLinksToDelete)
     }

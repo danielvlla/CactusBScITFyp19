@@ -1,8 +1,9 @@
-const { ipcRenderer }                = require('electron')
-const { createCursor, followCursor } = require('./js/cursor.js')
-const { Link, Rectangle, QuadTree }  = require('./js/quadtree')
-const { debounce, isEqual }          = require('lodash')
-const { genId }                      = require('./js/utils')
+const { ipcRenderer }                 = require('electron')
+const { createCursor, followCursor }  = require('./js/cursor.js')
+const { Link, Rectangle, QuadTree }   = require('./js/quadtree')
+const { debounce, isEqual }           = require('lodash')
+const { genId, isElementANavElement } = require('./js/utils')
+const { markNavbars, passNavElementOnDwell }                 = require('./js/navbar-pattern')
 
 var c
 
@@ -21,22 +22,23 @@ document.addEventListener('DOMContentLoaded', () => {
   let boundary = new Rectangle(clientWidth/2, clientHeight/2, clientWidth, clientHeight)
   let qTree = new QuadTree(boundary, 1)
 
+  // Populate Quad Tree
   let links = document.getElementsByTagName('a')
   for (var i = 0; i < links.length; i++) {
-    if (isElementANavigationElement(links[i])) {
+    // Filtering through unneeded links
+    if (isElementANavElement(links[i])) {
       continue
     }
-    links[i].classList.add('linkMark')
-    links[i].id = genId()
-
     let linkBounds = links[i].getBoundingClientRect()
     if (linkBounds.x === 0 && linkBounds.y === 0 && linkBounds.width === 0 && linkBounds.height === 0) {
       continue
     }
-
     if (!links[i].href ) {
       continue
     }
+
+    links[i].classList.add('linkMark')
+    links[i].id = genId()
 
     // If title is set, set to title, if not get text from anchor tag
     const linkTitle = links[i].title ? links[i].title : links[i].text.trim()
@@ -59,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     qTree.insert(link)
   }
 
+  // Get Links which fall within the cursor's range from Quad Tree
   var getLinksFromQuadTree = function queryTree(cursorLocation) {
     let range = new Rectangle(cursorLocation.x, cursorLocation.y, 200, 200)
     let points = qTree.query(range)
@@ -78,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
           linksVisited.push(points[i].id)
         }
       }
-
       ipcRenderer.send('getLinks', points)
     }
   }
@@ -98,11 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('mouseenter', () => {
     document.addEventListener('mousemove', getLinksFromCursorRange)
   })
+
+  //  NAVIGATION BAR INTERACTION PATTERN
+  let navElements = markNavbars()
+  if (navElements) {
+    for (i=0; i < navElements.length; i++) {
+      navElements[i].addEventListener('mouseover', passNavElementOnDwell)
+    }
+  } 
 })
-
-function isElementANavigationElement(element) {
-  var parentNav = element.closest('nav')
-  var parentRoleNav = element.closest('div[role="navigation"]')
-
-  return (parentNav || parentRoleNav) ? true : false
-}

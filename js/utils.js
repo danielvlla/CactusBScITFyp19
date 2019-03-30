@@ -34,5 +34,12 @@ module.exports = {
 
   genId: () => {
     return '_' + Math.random().toString(36).substr(2, 9)
+  },
+
+  isElementANavElement: element => {
+    var parentNav = element.closest('nav')
+    var parentRoleNav = element.closest('div[role="navigation"]')
+
+    return (parentNav || parentRoleNav) ? true : false
   }
 }
