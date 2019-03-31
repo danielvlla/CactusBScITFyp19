@@ -3,14 +3,6 @@ const { dwell } = require('./utils')
 
 let navElements = []
 
-class navItem {
-  constructor(name, hasChildren, children) {
-    this.name = name
-    this.hasChildren = hasChildren
-    this.children = children
-  }
-}
-
 function getNavElements() {
   var nav = {
     navTags: Array.from(document.querySelectorAll('nav')),
@@ -40,10 +32,58 @@ var markNavbars = function() {
   return navElements
 }
 
-let navJson = {}
+class navItem {
+  constructor(id, title, href, parent, children) {
+    this.id = id
+    this.title = title
+    this.href = href
+    this.parent = parent
+    this.children = children
+  }
+}
 
-var buildNavJson = function(parentUlTag) {
-    
+let navItems = [
+  
+]
+
+let navId = 1;
+
+var buildNavJson = function(element) {
+  if (element.tagName == "UL") {
+    let listItemsOfRoot = element.children
+    var root = new navItem(navId, "", "", 0, listItemsOfRoot)
+    navItems.push(root)
+
+    for (var i=0; i < listItemsOfRoot.length; i++) {
+      addItemToNavArray(listItemsOfRoot[i], root.id)
+    }
+
+    console.log(navItems)
+  }
+}
+
+function addItemToNavArray(listElement, parentId) {
+  let id = navId++
+  let title = listElement.innerText
+  let parent = parentId
+  let children = listElement.children
+  let href = listElement.children[0].href
+
+  let ulTag = listElement.getElementsByTagName('ul')
+  if(!ulTag) {
+    href = listElement.querySelector('a').href
+  } else {
+    for (var i=0; i < ulTag.length; i++) {
+      let nestedLinks = ulTag[i].children
+      for (var j=0; j < nestedLinks.length; j++) {
+        addItemToNavArray(nestedLinks[j], id)
+      }
+    }
+  }
+
+  let n = new navItem(id, title, href, parent, children)
+  navItems.push(n)
+  return n
 }
 
 function passNavElementOnDwell() {
