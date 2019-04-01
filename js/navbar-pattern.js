@@ -63,27 +63,27 @@ var buildNavJson = function(element) {
 }
 
 function addItemToNavArray(listElement, parentId) {
-  let id = navId++
+  let id = ++navId
   let title = listElement.innerText
   let parent = parentId
-  let children = listElement.children
+  let children = null
   let href = listElement.children[0].href
 
   let ulTag = listElement.getElementsByTagName('ul')
   if(!ulTag) {
     href = listElement.querySelector('a').href
   } else {
+    children = ulTag.children
     for (var i=0; i < ulTag.length; i++) {
-      let nestedLinks = ulTag[i].children
-      for (var j=0; j < nestedLinks.length; j++) {
-        addItemToNavArray(nestedLinks[j], id)
+      let nestedListItems = ulTag[i].children
+      for (var j=0; j < nestedListItems.length; j++) {
+        addItemToNavArray(nestedListItems[j], id)
       }
     }
   }
 
   let n = new navItem(id, title, href, parent, children)
   navItems.push(n)
-  return n
 }
 
 function passNavElementOnDwell() {
