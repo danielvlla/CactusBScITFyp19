@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var getLinksFromCursorRange =  debounce(() => {
     let cursorLoc = c.getBoundingClientRect()
-    getLinksFromQuadTree(cursorLoc), 500
+    getLinksFromQuadTree(cursorLoc)
   }, 500)
 
   document.addEventListener('mousemove', getLinksFromCursorRange)
@@ -101,11 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mousemove', getLinksFromCursorRange)
   })
 
+  // ---------- END HYPERLINK NAVIGATION PATTERN
+
   //  NAVIGATION BAR INTERACTION PATTERN
   let navElements = markNavbars()
   if (navElements) {
     for (i=0; i < navElements.length; i++) {
       navElements[i].addEventListener('mouseover', passNavElementOnDwell)
     }
-  } 
+  }
+  // ---------- END NAVBAR NAVIGATION PATTERN
+
 })

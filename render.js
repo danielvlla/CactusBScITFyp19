@@ -300,7 +300,6 @@ webview.addEventListener('dom-ready', () => {
 })
 
 // ======== SIDEBAR ========
-
 let allLinksReceived = []
 
 // const sidebarMaxLinks = Config.sidebarMaxLinks
@@ -367,5 +366,58 @@ ipcRenderer.on('getLinks', (event, message) => {
     dwell(this, () => {
       webview.src = this.lastElementChild.getAttribute('data-link')
     })
+  }
+})
+
+ipcRenderer.on('getNavLinks', (event, message) => {
+  let navArray = message
+  let linksToShow = []
+  linksToShow = navArray.filter(link => link.parent === 1)
+
+  renderLinks(linksToShow)
+
+  function loadLink() {
+    dwell(this, () => {
+      let linkId = parseInt(this.getAttribute('data-id'))
+      linksToShow = navArray.filter(link => link.parent === linkId)
+      renderLinks(linksToShow)
+      if (!linksToShow.length) {
+        webview.src = this.lastElementChild.getAttribute('data-link')
+      }
+    })
+  }
+
+  function renderLinks(links) {
+
+    emptySidebar()
+
+    const markup = `${links.map(link =>
+      `<div class='sidebar_item' data-id='${link.id}'>
+        <div class='sidebar_item_title'>
+          ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+        </div>
+        <div class='sidebar_item_link' data-link='${link.href ? link.href : " No Link "}'>
+          ${link.href ? link.href : " No Link "}
+        </div>
+      </div>
+      `).join('')}`
+
+    sidebar.insertAdjacentHTML('beforeend', markup);
+
+    let sidebarItems = document.querySelectorAll('.sidebar_item')
+    if (sidebarItems.length) {
+      for (var i=0; i < sidebarItems.length; i++) {
+        sidebarItems[i].addEventListener('mouseover', loadLink)
+      }
+    }
+  }
+
+  function emptySidebar() {
+    let sidebarItems = sidebar.querySelectorAll('.sidebar_item')
+    if (sidebarItems.length) {
+      for (var i=0; i < sidebarItems.length; i++) {
+        sidebarItems[i].parentNode.removeChild(sidebarItems[i])
+      }
+    }
   }
 })

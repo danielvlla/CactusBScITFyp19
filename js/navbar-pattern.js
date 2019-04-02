@@ -1,5 +1,6 @@
 const { concat } = require('lodash')
 const { dwell } = require('./utils')
+const { ipcRenderer } = require('electron')
 
 let navElements = []
 
@@ -33,69 +34,81 @@ var markNavbars = function() {
 }
 
 class navItem {
-  constructor(id, title, href, parent, children) {
+  constructor(id, title, href, parent) {
     this.id = id
     this.title = title
     this.href = href
     this.parent = parent
-    this.children = children
   }
 }
 
-let navItems = [
-  
-]
+let navItems = []
 
 let navId = 1;
 
-var buildNavJson = function(element) {
-  if (element.tagName == "UL") {
-    let listItemsOfRoot = element.children
-    var root = new navItem(navId, "", "", 0, listItemsOfRoot)
-    navItems.push(root)
+var buildNavArray = function(element) {
+  if (element.tagName) {
+    if (element.tagName == "UL" || element.tagName == "OL") {
+      let listItemsOfRoot = element.children
+      var root = new navItem(navId, "", "", 0, listItemsOfRoot)
+      navItems.push(root)
 
-    for (var i=0; i < listItemsOfRoot.length; i++) {
-      addItemToNavArray(listItemsOfRoot[i], root.id)
+      for (var i=0; i < listItemsOfRoot.length; i++) {
+        addItemToNavArray(listItemsOfRoot[i], root.id)
+      }
     }
-
-    console.log(navItems)
   }
 }
 
 function addItemToNavArray(listElement, parentId) {
   let id = ++navId
-  let title = listElement.innerText
+  let title = " "
   let parent = parentId
-  let children = null
-  let href = listElement.children[0].href
+  let href = " "
 
-  let ulTag = listElement.getElementsByTagName('ul')
-  if(!ulTag) {
-    href = listElement.querySelector('a').href
+  let anchor = null
+
+  if (listElement.tagName === "UL" || listElement.tagName === "OL") {
+    title = listElement.parentElement.textContent.trim().split('\n')[0]
+    anchor = listElement.parentElement.querySelector('a')
   } else {
-    children = ulTag.children
-    for (var i=0; i < ulTag.length; i++) {
-      let nestedListItems = ulTag[i].children
+    title = listElement.textContent.trim()
+    anchor = listElement.querySelector('a')
+  }
+
+  if (anchor) {
+    href = anchor.href
+  }
+
+  let ulTags = Array.from(listElement.getElementsByTagName('ul')) || Array.from(listElement.getElementsByTagName('ol'))
+  if(ulTags.length) {
+    for (var i=0; i < ulTags.length; i++) {
+      let nestedListItems = ulTags[i].children
+      let ulId = addItemToNavArray(ulTags[i], id)
       for (var j=0; j < nestedListItems.length; j++) {
-        addItemToNavArray(nestedListItems[j], id)
+        addItemToNavArray(nestedListItems[j], ulId)
       }
     }
   }
 
-  let n = new navItem(id, title, href, parent, children)
-  navItems.push(n)
+  let n = new navItem(id, title, href, parent)
+
+  if (n.title.trim() || n.href.trim()) {
+    navItems.push(n)
+  }
+  return id
 }
 
 function passNavElementOnDwell() {
   dwell(this, () => {
-    console.log(this)
-    let parentUlTag = this.getElementsByTagName('ul')[0]
-    buildNavJson(parentUlTag)
+    let parentUlTag = this.getElementsByTagName('ul')[0] || this.getElementsByTagName('ol')[0]
+    buildNavArray(parentUlTag)
+    // console.log(navItems)
+    ipcRenderer.send('getNavLinks', navItems)
   })
 }
 
 module.exports = {
   markNavbars,
-  buildNavJson,
   passNavElementOnDwell
 }

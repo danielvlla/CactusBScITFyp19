@@ -41,3 +41,50 @@
     }
   }
 }
+
+#dialog {
+  display: none;
+  width: 100%;
+  height: calc(100vh - #{$navHeight});
+  background-color: rgba($bluegrey, 0.1);
+  margin: 0 auto;
+  z-index: 5;
+  position: absolute;
+
+  #dialogBox {
+    display: flex;
+    border-radius: 10px;
+    box-shadow: -10px 3px 40px -15px $lightgrey;
+    width: 15em;
+    background: $white;
+    padding: 2em;
+    font-size: 21px;
+    position: absolute;
+    top: 15em;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    #dialogSuccess {
+      color: $green;
+      display: none;
+      margin-bottom: 10px;
+      vertical-align: top;
+    }
+
+    #dialogError {
+      color: $red;
+      display: none;
+      margin-bottom: 10px;
+      vertical-align: top;
+    }
+
+    #dialogMessage {
+      font-family: sans-serif;
+      margin-top: 20px;
+      color: $bluegrey;
+    }
+  }
+}

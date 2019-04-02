@@ -1,10 +1,33 @@
 @import '../vendor/_reset.scss';
 @import '_vars.scss';
 @import '_animations.scss';
-
 @import '_components.scss';
-@import '_generic.scss';
 @import '_nav.scss';
 @import '_overlays.scss';
-@import '_dialog.scss';
 @import '_sidebar.scss';
+
+body {
+  height: 100%;
+  display: block;
+  font-family: 'Roboto', sans-serif;
+}
+
+::placeholder {
+  color: $blue;
+}
+
+#views {
+  position: relative;
+}
+
+#webview-container {
+  display: grid;
+  grid-template-columns: 18% auto;
+}
+
+.webpage {
+  grid-column-start: 2 / span 1;
+  top: 0;
+  bottom: 0;
+  height: calc(100vh - #{$navHeight});
+}
