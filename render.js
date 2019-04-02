@@ -382,22 +382,28 @@ ipcRenderer.on('getNavLinks', (event, message) => {
       linksToShow = navArray.filter(link => link.parent === linkId)
       renderLinks(linksToShow)
       if (!linksToShow.length) {
-        webview.src = this.lastElementChild.getAttribute('data-link')
+        webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
       }
     })
   }
 
   function renderLinks(links) {
-
     emptySidebar()
+
+    links = markLinksWithChildren(links)
 
     const markup = `${links.map(link =>
       `<div class='sidebar_item' data-id='${link.id}'>
-        <div class='sidebar_item_title'>
-          ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+        <div>
+          <div class='sidebar_item_title'>
+            ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+          </div>
+          <div class='sidebar_item_link' data-link='${link.href ? link.href : " No Link "}'>
+            ${link.href ? link.href : " No Link "}
+          </div>
         </div>
-        <div class='sidebar_item_link' data-link='${link.href ? link.href : " No Link "}'>
-          ${link.href ? link.href : " No Link "}
+        <div class='sidebar_item_icon'>
+          <i class="${link.children ? 'fas fa-bars' : 'fas fa-angle-right'}"></i>
         </div>
       </div>
       `).join('')}`
@@ -419,5 +425,24 @@ ipcRenderer.on('getNavLinks', (event, message) => {
         sidebarItems[i].parentNode.removeChild(sidebarItems[i])
       }
     }
+  }
+
+  function markLinksWithChildren(links) {
+    let linksToShow = links
+    if (linksToShow.length) {
+      for (var i=0; i < navArray.length; i++) {
+        for (var j=0; j < linksToShow.length; j++) {
+          if (linksToShow[j] === navArray[i]) {
+            // Search navArray for every linktoshow ID in parent
+            let linksWithParent = navArray.filter(link => link.parent === linksToShow[j].id)
+            if (linksWithParent.length) {
+              linksToShow[j].children = 1
+            }
+          }
+        }
+        // if it returns anything it means that it contains children so display menu
+      }
+    }
+    return linksToShow
   }
 })

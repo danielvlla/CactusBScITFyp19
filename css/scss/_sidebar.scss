@@ -40,7 +40,8 @@
 .sidebar {
   &_item {
     @extend .dwellBtn;
-    display: flex;
+    display: grid;
+    grid-template-columns: 80% auto;
     height: 50px;
     width: 80%;
     padding: 10px;
@@ -50,22 +51,28 @@
     flex-direction: column;
     align-content: center;
 
-  &_title {
-    font-size: 0.8em;
-    word-wrap: break-word;
-    margin-bottom: 10px;
-  }
+    &_title {
+      font-size: 0.8em;
+      word-wrap: break-word;
+      margin-bottom: 10px;
+    }
 
-  &_link {
-    opacity: 0.4;
-    margin-top: 3px;
-    font-size: 0.6em;
-    word-wrap: break-word;
-  }
+    &_link {
+      opacity: 0.4;
+      margin-top: 3px;
+      font-size: 0.6em;
+      word-wrap: break-word;
+    }
 
-  &:hover {
-    color: $black;
-    background-color: $green;
-  }
+    &:hover {
+      color: $black;
+      background-color: $green;
+    }
+
+    &_icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }

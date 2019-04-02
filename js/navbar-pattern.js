@@ -34,11 +34,12 @@ var markNavbars = function() {
 }
 
 class navItem {
-  constructor(id, title, href, parent) {
+  constructor(id, title, href, parent, children) {
     this.id = id
     this.title = title
     this.href = href
     this.parent = parent
+    this.children = children
   }
 }
 
