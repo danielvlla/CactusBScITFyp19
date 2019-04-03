@@ -2,63 +2,27 @@ const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
 const { drop, isEqual }         = require('lodash')
-// const Config                    = require('./js/config')
-const { webFrame } = require('electron')
 
-
-var back, forward, backOrForward, omni, omnibox, webview
+var backOrForward, omni, webview
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav
-var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, cancelOmniBtn
-var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox
-var scrollUpBtn, scrollDownBtn
 var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon
 var timeoutScroll
-
-back = byId('backBtn')
-forward = byId('forwardBtn')
-omni = byId('url')
-webview = byId('webview')
-dialog = byId('dialog')
-dialogMessage = byId('dialogMessage')
-dialogErrorIcon = byId('dialogError')
-dialogSuccessIcon = byId('dialogSuccess')
-scrollUpBtn = byId('scroll-up')
-scrollDownBtn = byId('scroll-down')
-
-// ZOOMING Functionality
-var overlayOptions, cancelOptionsBtn
-var zoomInBtn, zoomOutBtn, resetZoomBtn
-
-overlayOptions = byId('overlay-options')
-zoomInBtn = byId('zoomInBtn')
-zoomOutBtn = byId('zoomOutBtn')
-resetZoomBtn = byId('resetZoomBtn')
-
-dwell(zoomInBtn, () => {
-  webview.send("zoomIn")
-  overlayOptions.style.display = 'none'
-})
-
-dwell(zoomOutBtn, () => {
-  webview.send("zoomOut")
-  overlayOptions.style.display = 'none'
-})
-
-dwell(resetZoomBtn, () => {
-  webview.send("zoomReset")
-  overlayOptions.style.display = 'none'
-})
 
 // webview.addEventListener('dom-ready', () => {
 //   webview.openDevTools()
 // })
 
-back.onclick = goBack
-forward.onclick = goForward
+omni = byId('url')
+webview = byId('webview')
+
+dialog = byId('dialog')
+dialogMessage = byId('dialogMessage')
+dialogErrorIcon = byId('dialogError')
+dialogSuccessIcon = byId('dialogSuccess')
+
 omni.onkeydown = sanitiseUrl
 omni.onclick = displayUrl
 webview.addEventListener('did-start-loading', loadingOmnibox)
-webview.addEventListener('dom-ready', scroller())
 
 // Sanitises URL
 function sanitiseUrl (event) {
@@ -78,7 +42,7 @@ function sanitiseUrl (event) {
 }
 
 // =================================
-// Browser Functionality
+// ==== Browser Functionality ======
 // =================================
 function reload() {
   hideAllOverlays()
@@ -109,7 +73,6 @@ function loadingOmnibox() {
     favicon.style.display="block"
     loader.style.display = "none"
     omni.value = webview.getTitle()
-    // omni.value = webview.src;
   }
 
   webview.addEventListener('did-start-loading', loadStart)
@@ -124,6 +87,15 @@ function displayUrl() {
     omni.classList.add('fadeInUp')
   }, 200);
 }
+
+// =================================
+// ==== Scrolling Functionality ====
+// =================================
+
+var scrollUpBtn, scrollDownBtn
+scrollUpBtn = byId('scroll-up')
+scrollDownBtn = byId('scroll-down')
+webview.addEventListener('dom-ready', scroller())
 
 function scroller() {
   scrollUpBtn.onmouseover = () => {
@@ -152,17 +124,16 @@ function scroller() {
 }
 
 // ======== HIDE ALL OVERLAYS ========
-
 function hideAllOverlays() {
-  overlayNav.style.display = 'none'
-
-  overlayOmnibox = byId('overlay-omnibox')
-  overlayOmnibox.style.display = 'none'
-
-  overlayOptions.style.display = 'none'
+  if (overlayNav) overlayNav.style.display = 'none'
+  if (overlayOmnibox) overlayOmnibox.style.display = 'none'
+  if (overlayOptions) overlayOptions.style.display = 'none'
 }
 
-// ======== NAVIGATION OVERLAY ========
+// =================================
+// ====== NAVIGATION OVERLAY =======
+// =================================
+
 backOrForward = byId('backOrForwardBtn')
 cancelNavBtn = byId('cancel-nav')
 backNavBtn = byId('goBackBtn')
@@ -208,108 +179,144 @@ dwell(backNavBtn, goBack)
 
 dwell(forwardNavBtn, goForward)
 
+// =================================
 // ======== OMNIBOX OVERLAY ========
+// =================================
+
+var omnibox, overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, viewBookmarksOmniBtn, cancelOmniBtn
+var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox
+
 omnibox = byId('omnibox')
-refreshOmniBtn = byId('refreshPageBtn')
-cancelOmniBtn = byId('cancel-omni')
-searchOmniBtn = byId('searchBtn')
 
 dwell(omnibox, () => {
-  hideAllOverlays()
   overlayOmnibox = byId('overlay-omnibox')
+  refreshOmniBtn = byId('refreshPageBtn')
+  searchOmniBtn = byId('searchBtn')
+  bookmarkOmniBtn = byId('bookmarkPageBtn')
+  viewBookmarksOmniBtn = byId('showBookmarksBtn')
+  cancelOmniBtn = byId('cancel-omni')
+
+  hideAllOverlays()
   overlayOmnibox.style.display = 'grid'
-})
 
-// SEARCH
-cancelSearchBtn = byId('cancel-search')
-submitSearchBtn = byId('submit-search')
+  dwell(refreshOmniBtn, reload)
 
-dwell(searchOmniBtn, () => {
-  hideAllOverlays()
-  overlaySearchBox = byId('overlay-search')
-  overlaySearchBox.style.display="grid"
-  inputSearchBox = byId('searchText')
-  inputSearchBox.focus();
-})
+  dwell(searchOmniBtn, () => {
+    cancelSearchBtn = byId('cancel-search')
+    submitSearchBtn = byId('submit-search')
+    hideAllOverlays()
+    overlaySearchBox = byId('overlay-search')
+    overlaySearchBox.style.display="grid"
+    inputSearchBox = byId('searchText')
+    inputSearchBox.focus();
 
-dwell(submitSearchBtn, () => {
-  hideAllOverlays()
-  inputSearchBox = byId('searchText')
-  overlaySearchBox.style.display="none"
-  webview.src = "https://www.google.com/search?q=" + inputSearchBox.value;
-})
+    dwell(submitSearchBtn, () => {
+      hideAllOverlays()
+      inputSearchBox = byId('searchText')
+      overlaySearchBox.style.display="none"
+      webview.src = "https://www.google.com/search?q=" + inputSearchBox.value;
+    })
 
-dwell(cancelSearchBtn, () => {
-  overlaySearchBox.style.display = 'none'
-})
-
-dwell(refreshOmniBtn, reload)
-
-dwell(cancelOmniBtn, () => {
-  overlayOmnibox.style.display = 'none'
-})
-
-// ======== OPTIONS OVERLAY ========
-var options = byId('menuBtn')
-cancelOptionsBtn = byId('cancel-options')
-
-dwell(options, () => {
-  hideAllOverlays()
-  overlayOptions.style.display = 'none'
-  overlayOptions = byId('overlay-options')
-  overlayOptions.style.display = 'grid'
-})
-
-dwell(cancelOptionsBtn, () => {
-  overlayOptions.style.display = 'none'
-})
-
-// ======== BOOKMARKS ========
-bookmarkOmniBtn = byId('bookmarkPageBtn')
-
-dwell(bookmarkOmniBtn, () => {
-  fs.readFile('bookmarks.json', 'utf8', (err, data) => {
-    var bookmark = { url: webview.src, name: webview.getTitle() };
-
-    if (err) {
-      return err
-    } else {
-      var bookmarks = JSON.parse(data)
-      var exists = false;
-
-      for(var i=0; bookmarks.bookmarks.length > i; i++) {
-        if (bookmarks.bookmarks[i].url === bookmark.url) {
-          exists = true;
-        }
-      }
-
-      if (!exists) {
-        bookmarks.bookmarks.push(bookmark)
-        let bookmarksJson = JSON.stringify(bookmarks)
-        fs.writeFile('bookmarks.json', bookmarksJson, 'utf8', (err) => {
-          if (err) throw err
-        })
-        dialogMessage.innerHTML = 'Bookmark added succesfully!'
-        dialogErrorIcon.style.display = 'none'
-        dialogSuccessIcon.style.display = 'block'
-      } else {
-        dialogSuccessIcon.style.display = 'none'
-        dialogMessage.innerHTML = 'Bookmark already exists!'
-        dialogErrorIcon.style.display = 'block'
-      }
-    }
+    dwell(cancelSearchBtn, () => {
+      overlaySearchBox.style.display = 'none'
+    })
   })
 
-  hideAllOverlays()
-  dialog.style.display = 'flex'
-  setTimeout(() => {
-    dialog.classList.add('fadeOutDown')
-  }, 3000);
+  // BOOKMARKS 
+  dwell(bookmarkOmniBtn, () => {
+    fs.readFile('bookmarks.json', 'utf8', (err, data) => {
+      var bookmark = { url: webview.src, name: webview.getTitle() };
 
-  setTimeout(() => {
-    dialog.style.display = 'none'
-    dialog.classList.remove('fadeOutDown')
-  }, 3600);
+      if (err) {
+        return err
+      } else {
+        var bookmarks = JSON.parse(data)
+        var exists = false;
+
+        for(var i=0; bookmarks.bookmarks.length > i; i++) {
+          if (bookmarks.bookmarks[i].url === bookmark.url) {
+            exists = true;
+          }
+        }
+
+        if (!exists) {
+          bookmarks.bookmarks.push(bookmark)
+          let bookmarksJson = JSON.stringify(bookmarks)
+          fs.writeFile('bookmarks.json', bookmarksJson, 'utf8', (err) => {
+            if (err) throw err
+          })
+          dialogMessage.innerHTML = 'Bookmark added succesfully!'
+          dialogErrorIcon.style.display = 'none'
+          dialogSuccessIcon.style.display = 'block'
+        } else {
+          dialogSuccessIcon.style.display = 'none'
+          dialogMessage.innerHTML = 'Bookmark already exists!'
+          dialogErrorIcon.style.display = 'block'
+        }
+      }
+    })
+
+    hideAllOverlays()
+    dialog.style.display = 'flex'
+    setTimeout(() => {
+      dialog.classList.add('fadeOutDown')
+    }, 3000);
+
+    setTimeout(() => {
+      dialog.style.display = 'none'
+      dialog.classList.remove('fadeOutDown')
+    }, 3600);
+  })
+
+  dwell(viewBookmarksOmniBtn, () => {
+    let bookmarksJson = fs.readFileSync('bookmarks.json', 'utf8')
+    bookmarksJson = JSON.parse(bookmarksJson)
+    console.log(bookmarksJson)
+  })
+
+  dwell(cancelOmniBtn, () => {
+    overlayOmnibox.style.display = 'none'
+  })
+})
+
+// =================================
+// ======== OPTIONS OVERLAY ========
+// =================================
+
+// ZOOMING
+var options, overlayOptions, cancelOptionsBtn
+var zoomInBtn, zoomOutBtn, resetZoomBtn
+
+options = byId('menuBtn')
+
+dwell(options, () => {
+  overlayOptions = byId('overlay-options')
+  zoomInBtn = byId('zoomInBtn')
+  zoomOutBtn = byId('zoomOutBtn')
+  resetZoomBtn = byId('resetZoomBtn')
+  cancelOptionsBtn = byId('cancel-options')
+
+  hideAllOverlays()
+  overlayOptions.style.display = 'grid'
+
+  dwell(zoomInBtn, () => {
+    webview.send("zoomIn")
+    overlayOptions.style.display = 'none'
+  })
+
+  dwell(zoomOutBtn, () => {
+    webview.send("zoomOut")
+    overlayOptions.style.display = 'none'
+  })
+
+  dwell(resetZoomBtn, () => {
+    webview.send("zoomReset")
+    overlayOptions.style.display = 'none'
+  })
+
+  dwell(cancelOptionsBtn, () => {
+    overlayOptions.style.display = 'none'
+  })
 })
 
 webview.addEventListener('dom-ready', () => {

@@ -1,9 +1,7 @@
-const { app, BrowserWindow, BrowserView, webContents, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const url = require('url')
 
 let mainWindow
-let view
 // const iconPath = path.join(__dirname, 'logo.png')
 
 function createWindow () {
