@@ -1,7 +1,7 @@
 const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
-const { drop }                  = require('lodash')
+const { drop, isEqual }         = require('lodash')
 // const Config                    = require('./js/config')
 
 var back, forward, backOrForward, omni, omnibox, webview;
@@ -331,6 +331,8 @@ ipcRenderer.on('getLinks', (event, message) => {
   // Replace links
   if (!linksInSidebar.length) {
     linksToShow = message
+  } else if (isEqual(linksInSidebar, message)) {
+    linksToShow = []
   } else {
     numberOfLinksToDelete = linksInSidebar.length
     linksToShow = message
@@ -341,7 +343,6 @@ ipcRenderer.on('getLinks', (event, message) => {
       sidebarItems[i].classList.add('fadeOutDown')
       let iter = i
       sidebarItems[i].addEventListener('webkitAnimationEnd', () => {
-        console.log(sidebarItems[iter])
         sidebarItems[iter].parentNode.removeChild(sidebarItems[iter])
         drop(linksInSidebar, numberOfLinksToDelete)
         displayHyperlinks()

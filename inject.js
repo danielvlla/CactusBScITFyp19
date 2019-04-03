@@ -1,7 +1,7 @@
 const { ipcRenderer }                 = require('electron')
 const { createCursor, followCursor }  = require('./js/cursor.js')
 const { Link, Rectangle, QuadTree }   = require('./js/quadtree')
-const { debounce, isEqual }           = require('lodash')
+const { debounce, throttle, isEqual }           = require('lodash')
 const { genId, isElementANavElement } = require('./js/utils')
 const { markNavbars, passNavElementOnDwell }                 = require('./js/navbar-pattern')
 
@@ -85,10 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  var getLinksFromCursorRange =  debounce(() => {
+  var getLinksFromCursorRange =  throttle(() => {
     let cursorLoc = c.getBoundingClientRect()
     getLinksFromQuadTree(cursorLoc)
-  }, 500)
+  }, 2000, { 'leading': false })
 
   document.addEventListener('mousemove', getLinksFromCursorRange)
 
