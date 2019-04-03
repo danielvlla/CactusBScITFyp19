@@ -307,6 +307,10 @@ const lengthUrl = 30
 const lengthTitle = 20
 let sidebar = byId('sidebar_items')
 
+// ========================
+// HYPERLINK NAVIGATION
+// ========================
+
 ipcRenderer.on('getLinks', (event, message) => {
   allLinksReceived.push(...message)
   let linksInSidebar = []
@@ -315,7 +319,7 @@ ipcRenderer.on('getLinks', (event, message) => {
 
   var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
   if (sidebarItems.length) {
-    let sidebarUrls = sidebarItems.map(item => `${item.lastElementChild.getAttribute('data-link')}`)
+    let sidebarUrls = sidebarItems.map(item => `${item.firstElementChild.lastElementChild.getAttribute('data-link')}`)
     for (var i=0; i < sidebarUrls.length; i++) {
       var sidebarLink = allLinksReceived.find(link => link.url === sidebarUrls[i])
       if (sidebarLink) {
@@ -324,6 +328,7 @@ ipcRenderer.on('getLinks', (event, message) => {
     }
   }
 
+  // Replace links
   if (!linksInSidebar.length) {
     linksToShow = message
   } else {
@@ -333,41 +338,64 @@ ipcRenderer.on('getLinks', (event, message) => {
 
   if (numberOfLinksToDelete && sidebarItems.length) {
     for (i=0; i < numberOfLinksToDelete; i++) {
-      sidebarItems[i].parentNode.removeChild(sidebarItems[i])
-      drop(linksInSidebar, numberOfLinksToDelete)
+      sidebarItems[i].classList.add('fadeOutDown')
+      let iter = i
+      sidebarItems[i].addEventListener('webkitAnimationEnd', () => {
+        console.log(sidebarItems[iter])
+        sidebarItems[iter].parentNode.removeChild(sidebarItems[iter])
+        drop(linksInSidebar, numberOfLinksToDelete)
+        displayHyperlinks()
+      })
+      // setTimeout(() => {
+      //   sidebarItems[i].parentNode.removeChild(sidebarItems[i])
+      // }, 600)
     }
   }
 
-  // Displaying Links
-  if (linksToShow.length) {
-    const markup = `${linksToShow.map(link =>
-      `<div class='sidebar_item' id='${link.id}'>
-        <div class='sidebar_item_title'>
-          ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+  function displayHyperlinks() {
+    if (linksToShow.length) {
+      const markup = `${linksToShow.map(link =>
+        `<div class='sidebar_item fadeInDown' id='${link.id}'>
+          <div>
+            <div class='sidebar_item_title'>
+              ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
+            </div>
+            <div class='sidebar_item_link' data-link='${link.url}'>
+              ${link.url.length <= lengthUrl ? link.url : link.url.substring(0, lengthUrl)+'...'}
+            </div>
+          </div>
+          <div class='sidebar_item_icon'>
+            <i class="fas fa-angle-right"></i>
+          </div>
         </div>
-        <div class='sidebar_item_link' data-link='${link.url}'>
-          ${link.url.length <= lengthUrl ? link.url : link.url.substring(0, lengthUrl)+'...'}
-        </div>
-      </div>
-      `).join('')}`
+        `).join('')}`
+  
+      sidebar.insertAdjacentHTML('beforeend', markup);
+      linksToShow = []
 
-    sidebar.insertAdjacentHTML('beforeend', markup);
-    linksToShow = []
+      sidebarItems = document.querySelectorAll('.sidebar_item')
+      if (sidebarItems.length) {
+        for (i=0; i < sidebarItems.length; i++) {
+          sidebarItems[i].addEventListener('mouseover', getLink)
+        }
+      }
+    }
   }
 
-  sidebarItems = document.querySelectorAll('.sidebar_item')
-  if (sidebarItems.length) {
-    for (i=0; i < sidebarItems.length; i++) {
-      sidebarItems[i].addEventListener('mouseover', getLink)
-    }
+  if (!numberOfLinksToDelete) {
+    displayHyperlinks()
   }
 
   function getLink() {
     dwell(this, () => {
-      webview.src = this.lastElementChild.getAttribute('data-link')
+      webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
     })
   }
 })
+
+// ========================
+// NAVBAR NAVIGATION
+// ========================
 
 ipcRenderer.on('getNavLinks', (event, message) => {
   let navArray = message
@@ -433,14 +461,12 @@ ipcRenderer.on('getNavLinks', (event, message) => {
       for (var i=0; i < navArray.length; i++) {
         for (var j=0; j < linksToShow.length; j++) {
           if (linksToShow[j] === navArray[i]) {
-            // Search navArray for every linktoshow ID in parent
             let linksWithParent = navArray.filter(link => link.parent === linksToShow[j].id)
             if (linksWithParent.length) {
               linksToShow[j].children = 1
             }
           }
         }
-        // if it returns anything it means that it contains children so display menu
       }
     }
     return linksToShow
