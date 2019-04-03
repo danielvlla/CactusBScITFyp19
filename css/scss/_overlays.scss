@@ -52,14 +52,18 @@
 }
 
 #overlay-omnibox {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   grid-template-areas:
-  'bookmark refresh search'
-  'url tabs close'
-  'cancel cancel cancel';
+  'refresh search'
+  'bookmark bookmarks'
+  'cancel cancel';
 
   #bookmarkPageBtn {
     grid-area: bookmark;
+  }
+
+  #showBookmarksBtn {
+    grid-area: bookmarks;
   }
 
   #refreshPageBtn {
@@ -68,14 +72,6 @@
 
   #searchBtn {
     grid-area: search;
-  }
-
-  #newUrlBtn {
-    grid-area: url;
-  }
-
-  #tabsBtn {
-    grid-area: tabs;
   }
 
   #closeBtn {
@@ -87,12 +83,12 @@
 #overlay-options {
   grid-template-columns: repeat(2, 1fr);
   grid-template-areas:
-  'bookmarks about'
   'zoomIn zoomOut'
+  'reset about'
   'cancel cancel';
 
-  #openBookmarksBtn {
-    grid-area: bookmarks;
+  #resetZoomBtn {
+    grid-area: reset;
   }
 
   #aboutBtn {
@@ -158,15 +154,16 @@
   outline: none;
   overflow: hidden;
   position: relative;
-  z-index: 4;
+  z-index: 20;
 
   color: $lightblue;
   transition: $dwellTime;
 
   &:before {
     content: '';
-    background: lighten($blue, 5%);
+    background: lighten($green, 5%);
     width: 40em;
+    z-index: 25;
     height: 40em;
     display: inline-block;
     position: absolute;
@@ -191,6 +188,11 @@
       opacity: 0.6;
       transform: scale(0);
     }
+  }
+
+  &-title {
+    margin-left: 1.5em;
+    font-size: 1.8em;
   }
 }
 

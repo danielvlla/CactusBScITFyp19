@@ -347,9 +347,6 @@ ipcRenderer.on('getLinks', (event, message) => {
         drop(linksInSidebar, numberOfLinksToDelete)
         displayHyperlinks()
       })
-      // setTimeout(() => {
-      //   sidebarItems[i].parentNode.removeChild(sidebarItems[i])
-      // }, 600)
     }
   }
 
