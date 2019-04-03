@@ -3,14 +3,15 @@ const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
 const { drop, isEqual }         = require('lodash')
 // const Config                    = require('./js/config')
+const { webFrame } = require('electron')
 
-var back, forward, backOrForward, omni, omnibox, webview;
-var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav;
-var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, cancelOmniBtn;
-var overlayOptions, cancelOptionsBtn;
-var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox;
-var scrollUpBtn, scrollDownBtn;
-var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon;
+
+var back, forward, backOrForward, omni, omnibox, webview
+var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav
+var overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, cancelOmniBtn
+var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox
+var scrollUpBtn, scrollDownBtn
+var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon
 var timeoutScroll
 
 back = byId('backBtn')
@@ -24,9 +25,33 @@ dialogSuccessIcon = byId('dialogSuccess')
 scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
 
-webview.addEventListener('dom-ready', () => {
-  webview.openDevTools();
+// ZOOMING Functionality
+var overlayOptions, cancelOptionsBtn
+var zoomInBtn, zoomOutBtn, resetZoomBtn
+
+overlayOptions = byId('overlay-options')
+zoomInBtn = byId('zoomInBtn')
+zoomOutBtn = byId('zoomOutBtn')
+resetZoomBtn = byId('resetZoomBtn')
+
+dwell(zoomInBtn, () => {
+  webview.send("zoomIn")
+  overlayOptions.style.display = 'none'
 })
+
+dwell(zoomOutBtn, () => {
+  webview.send("zoomOut")
+  overlayOptions.style.display = 'none'
+})
+
+dwell(resetZoomBtn, () => {
+  webview.send("zoomReset")
+  overlayOptions.style.display = 'none'
+})
+
+// webview.addEventListener('dom-ready', () => {
+//   webview.openDevTools()
+// })
 
 back.onclick = goBack
 forward.onclick = goForward
@@ -134,7 +159,6 @@ function hideAllOverlays() {
   overlayOmnibox = byId('overlay-omnibox')
   overlayOmnibox.style.display = 'none'
 
-  overlayOptions = byId('overlay-options')
   overlayOptions.style.display = 'none'
 }
 
