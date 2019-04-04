@@ -9,21 +9,21 @@ var _browser_zoomLevel = 0
 var _browser_maxZoom = 9
 var _browser_minZoom = -8
 
-ipcRenderer.on("zoomIn", function () {
+ipcRenderer.on("zoomIn", () => {
   if (_browser_maxZoom > _browser_zoomLevel) {
     _browser_zoomLevel += 0.5
   }
   webFrame.setZoomLevel(_browser_zoomLevel)
 });
 
-ipcRenderer.on("zoomOut", function () {
+ipcRenderer.on("zoomOut", () => {
   if (_browser_minZoom < _browser_zoomLevel) {
     _browser_zoomLevel -= 0.5
   }
   webFrame.setZoomLevel(_browser_zoomLevel)
 });
 
-ipcRenderer.on("zoomReset", function () {
+ipcRenderer.on("zoomReset", () => {
   _browser_zoomLevel = 0
   webFrame.setZoomLevel(_browser_zoomLevel)
 })

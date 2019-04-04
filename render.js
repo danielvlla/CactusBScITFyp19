@@ -2,18 +2,20 @@ const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
 const { drop, isEqual }         = require('lodash')
+const psl                       = require('psl');
 
 var backOrForward, omni, webview
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav
 var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon
 var timeoutScroll
-
-// webview.addEventListener('dom-ready', () => {
-//   webview.openDevTools()
-// })
+var webviewContainer
 
 omni = byId('url')
 webview = byId('webview')
+
+webview.addEventListener('dom-ready', () => {
+  webview.openDevTools()
+})
 
 dialog = byId('dialog')
 dialogMessage = byId('dialogMessage')
@@ -185,6 +187,7 @@ dwell(forwardNavBtn, goForward)
 
 var omnibox, overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, viewBookmarksOmniBtn, cancelOmniBtn
 var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox
+var bookmarksWebview
 
 omnibox = byId('omnibox')
 
@@ -225,7 +228,7 @@ dwell(omnibox, () => {
   // BOOKMARKS 
   dwell(bookmarkOmniBtn, () => {
     fs.readFile('bookmarks.json', 'utf8', (err, data) => {
-      var bookmark = { url: webview.src, name: webview.getTitle() };
+      var bookmark = { url: webview.src, name: webview.getTitle() }
 
       if (err) {
         return err
@@ -269,9 +272,31 @@ dwell(omnibox, () => {
   })
 
   dwell(viewBookmarksOmniBtn, () => {
+    webviewContainer = byId('webview-container')
+    webviewContainer.insertAdjacentHTML('beforeend', `
+      <webview id="bookmarkview" class="webpage" src="./bookmarks.html" preload="./injectBookmark.js" autosize="on"></webview>
+    `)
+    hideAllOverlays()
+    bookmarksWebview = byId('bookmarkview')
+
+    bookmarksWebview.addEventListener('dom-ready', () => {
+      bookmarksWebview.openDevTools()
+    })
+
+    webview.style.display = 'none';
+    bookmarksWebview.style.display = 'flex'
+
     let bookmarksJson = fs.readFileSync('bookmarks.json', 'utf8')
-    bookmarksJson = JSON.parse(bookmarksJson)
-    console.log(bookmarksJson)
+
+    bookmarksWebview.addEventListener('dom-ready', () => {
+      bookmarksWebview.send('getBookmarks', bookmarksJson)
+    })
+
+    ipcRenderer.on('loadBookmark', (event, message) => {
+      webview.style.display = 'flex'
+      bookmarksWebview.style.display = 'none'
+      webview.src = message
+    })
   })
 
   dwell(cancelOmniBtn, () => {

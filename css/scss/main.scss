@@ -31,3 +31,7 @@ body {
   bottom: 0;
   height: calc(100vh - #{$navHeight});
 }
+
+#bookmarkView {
+  display: none;
+}

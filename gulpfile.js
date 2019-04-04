@@ -12,3 +12,9 @@ gulp.task('webviewCss', () => {
     .pipe(sass({outputStyle: 'compressed'}))
     .pipe(gulp.dest('css/'))
 })
+
+gulp.task('bookmarksCss', () => {
+  return gulp.src('css/scss/bookmarks.scss')
+    .pipe(sass({outputStyle: 'compressed'}))
+    .pipe(gulp.dest('css/'))
+})

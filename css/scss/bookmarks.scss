@@ -1,0 +1,53 @@
+@import './_vars.scss';
+@import './_components.scss';
+
+body {
+  height: 100%;
+  width: 75%;
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  color: $black;
+}
+
+#bookmarks {
+  &Title {
+    font-weight: 400;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  &Boxes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+
+    .bookmark {
+      &Box {
+        @extend .dwellBtn;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: $offwhite;
+        width: 300px;
+        margin-bottom: 50px;
+        padding: 30px;
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      &Title {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+      }
+
+      &Link {
+        font-size: 0.8em;
+        color: $lightblue;
+        word-wrap: break-word;
+      }
+    }
+  }
+}
+
+

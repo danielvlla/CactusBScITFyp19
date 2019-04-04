@@ -72,19 +72,3 @@ a, input, button, div  {
     width: 100%;
   }
 }
-
-// .navMarker::before {
-//   content: " ";
-//   position: absolute;
-//   width: 100%;
-//   height: 70px;
-//   border-radius: 20px;
-//   background-image: linear-gradient($blue-2, $blue-2);
-//   background-size: 0% 0%;
-//   background-position: 50% 50%;
-//   transition: background-size $dwellTime ease-in-out;
-// }
-
-// .navMarker:hover:before {
-//   background-size: 100% 100%;
-// }

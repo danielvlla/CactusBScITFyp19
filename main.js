@@ -50,6 +50,10 @@ ipcMain.on('getNavLinks', (event, message) => {
   mainWindow.webContents.send('getNavLinks', message)
 })
 
+ipcMain.on('loadBookmark', (event, message) => {
+  mainWindow.webContents.send('loadBookmark', message)
+})
+
 // ipcMain.on('highlightLinks', (event, message) => {
 //   console.log('FROM MAIN')
 //   event.sender.send('highlightLinks', message)
