@@ -11,14 +11,14 @@ var _browser_minZoom = -8
 
 ipcRenderer.on("zoomIn", () => {
   if (_browser_maxZoom > _browser_zoomLevel) {
-    _browser_zoomLevel += 0.5
+    _browser_zoomLevel += 0.75
   }
   webFrame.setZoomLevel(_browser_zoomLevel)
 });
 
 ipcRenderer.on("zoomOut", () => {
   if (_browser_minZoom < _browser_zoomLevel) {
-    _browser_zoomLevel -= 0.5
+    _browser_zoomLevel -= 0.75
   }
   webFrame.setZoomLevel(_browser_zoomLevel)
 });

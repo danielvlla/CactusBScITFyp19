@@ -13,9 +13,9 @@ var webviewContainer
 omni = byId('url')
 webview = byId('webview')
 
-webview.addEventListener('dom-ready', () => {
-  webview.openDevTools()
-})
+// webview.addEventListener('dom-ready', () => {
+//   webview.openDevTools()
+// })
 
 dialog = byId('dialog')
 dialogMessage = byId('dialogMessage')
@@ -279,9 +279,9 @@ dwell(omnibox, () => {
     hideAllOverlays()
     bookmarksWebview = byId('bookmarkview')
 
-    bookmarksWebview.addEventListener('dom-ready', () => {
-      bookmarksWebview.openDevTools()
-    })
+    // bookmarksWebview.addEventListener('dom-ready', () => {
+    //   bookmarksWebview.openDevTools()
+    // })
 
     webview.style.display = 'none';
     bookmarksWebview.style.display = 'flex'
@@ -386,12 +386,12 @@ ipcRenderer.on('getLinks', (event, message) => {
 
   // Replace links
   if (!linksInSidebar.length) {
-    linksToShow = message
+    linksToShow = message.filter(link => link.title && link.url)
   } else if (isEqual(linksInSidebar, message)) {
     linksToShow = []
   } else {
     numberOfLinksToDelete = linksInSidebar.length
-    linksToShow = message
+    linksToShow = message.filter(link => link.title && link.url)
   }
 
   if (numberOfLinksToDelete && sidebarItems.length) {
