@@ -2,7 +2,6 @@ const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
 const { drop, isEqual }         = require('lodash')
-const psl                       = require('psl');
 
 var backOrForward, omni, webview
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav
@@ -13,9 +12,9 @@ var webviewContainer
 omni = byId('url')
 webview = byId('webview')
 
-// webview.addEventListener('dom-ready', () => {
-//   webview.openDevTools()
-// })
+webview.addEventListener('dom-ready', () => {
+  webview.openDevTools()
+})
 
 dialog = byId('dialog')
 dialogMessage = byId('dialogMessage')
@@ -368,6 +367,7 @@ let sidebar = byId('sidebar_items')
 // ========================
 
 ipcRenderer.on('getLinks', (event, message) => {
+  console.log(message)
   allLinksReceived.push(...message)
   let linksInSidebar = []
   let linksToShow = []
