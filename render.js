@@ -227,7 +227,8 @@ dwell(omnibox, () => {
   // BOOKMARKS 
   dwell(bookmarkOmniBtn, () => {
     fs.readFile('bookmarks.json', 'utf8', (err, data) => {
-      var bookmark = { url: webview.src, name: webview.getTitle() }
+      let bMarkName = webview.src.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+      var bookmark = { url: webview.src, name:  bMarkName}
 
       if (err) {
         return err
@@ -278,9 +279,9 @@ dwell(omnibox, () => {
     hideAllOverlays()
     bookmarksWebview = byId('bookmarkview')
 
-    // bookmarksWebview.addEventListener('dom-ready', () => {
-    //   bookmarksWebview.openDevTools()
-    // })
+    bookmarksWebview.addEventListener('dom-ready', () => {
+      bookmarksWebview.openDevTools()
+    })
 
     webview.style.display = 'none';
     bookmarksWebview.style.display = 'flex'
