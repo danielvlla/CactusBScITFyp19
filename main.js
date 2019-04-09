@@ -66,10 +66,10 @@ ipcMain.on('showScrollUp', () => {
   mainWindow.webContents.send('showScrollUp')
 })
 
-ipcMain.on('hideScrollDown', () => {
-  mainWindow.webContents.send('hideScrollDown')
-})
+// ipcMain.on('hideScrollDown', () => {
+//   mainWindow.webContents.send('hideScrollDown')
+// })
 
-ipcMain.on('showScrollDown', () => {
-  mainWindow.webContents.send('showScrollDown')
-})
+// ipcMain.on('showScrollDown', () => {
+//   mainWindow.webContents.send('showScrollDown')
+// })

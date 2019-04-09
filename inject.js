@@ -135,6 +135,11 @@ function markLinks() {
      continue
    }
 
+  //  var text = anchors[i].text.concat(anchors[i].title)
+  //  if (!text.match(/[a-z]/i)) {
+  //    continue
+  //  }
+
    anchors[i].classList.add('linkMark')
    anchors[i].id = genId()
    links.push(anchors[i])

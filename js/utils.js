@@ -1,7 +1,9 @@
 const config = require('./config')
-const workerTimers = require('worker-timers')
+const Timeout = require('smart-timeout')
 
 let dwellTime = config.dwellTime;
+
+let timeoutArray = []
 
 module.exports = {
   byId: (id) => {
@@ -34,16 +36,12 @@ module.exports = {
   // },
 
   dwell: (elem, callback) => {
-    var timeoutId
     elem.onmouseover = () => {
-      timeoutId = workerTimers.setTimeout(() => {
-        callback()
-        workerTimers.clearTimeout(timeoutId);
-      }, dwellTime);
+      Timeout.set(callback, dwellTime)
     }
-   
+
     elem.onmouseout = () => {
-      workerTimers.clearTimeout(timeoutId);
+      Timeout.clear(callback)
     }
   },
 
