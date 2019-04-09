@@ -28,3 +28,10 @@ ipcRenderer.on('getBookmarks', (event, message) => {
     })
   }
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+  let closeBtn = byId('bookmarksClose')
+  dwell(closeBtn, () => {
+    ipcRenderer.send('closeBookmarks')
+  })
+})

@@ -54,7 +54,22 @@ ipcMain.on('loadBookmark', (event, message) => {
   mainWindow.webContents.send('loadBookmark', message)
 })
 
-// ipcMain.on('highlightLinks', (event, message) => {
-//   console.log('FROM MAIN')
-//   event.sender.send('highlightLinks', message)
-// })
+ipcMain.on('closeBookmarks', (event, message) => {
+  mainWindow.webContents.send('closeBookmarks', message)
+})
+
+ipcMain.on('hideScrollUp', () => {
+  mainWindow.webContents.send('hideScrollUp')
+})
+
+ipcMain.on('showScrollUp', () => {
+  mainWindow.webContents.send('showScrollUp')
+})
+
+ipcMain.on('hideScrollDown', () => {
+  mainWindow.webContents.send('hideScrollDown')
+})
+
+ipcMain.on('showScrollDown', () => {
+  mainWindow.webContents.send('showScrollDown')
+})

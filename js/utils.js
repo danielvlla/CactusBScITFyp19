@@ -1,4 +1,5 @@
 const config = require('./config')
+const workerTimers = require('worker-timers')
 
 let dwellTime = config.dwellTime;
 
@@ -21,14 +22,28 @@ module.exports = {
     rawFile.send(null)
   },
 
-  dwell: (elem, callback) => {
-    var timeout = 0
-    elem.onmouseover = () => {
-      timeout = setTimeout(callback, dwellTime)
-    };
+  // dwell: (elem, callback) => {
+  //   var timeout = 0
+  //   elem.onmouseover = () => {
+  //     timeout = setTimeout(callback, dwellTime)
+  //   };
   
+  //   elem.onmouseout = () => {
+  //     clearTimeout(timeout)
+  //   }
+  // },
+
+  dwell: (elem, callback) => {
+    var timeoutId
+    elem.onmouseover = () => {
+      timeoutId = workerTimers.setTimeout(() => {
+        callback()
+        workerTimers.clearTimeout(timeoutId);
+      }, dwellTime);
+    }
+   
     elem.onmouseout = () => {
-      clearTimeout(timeout)
+      workerTimers.clearTimeout(timeoutId);
     }
   },
 

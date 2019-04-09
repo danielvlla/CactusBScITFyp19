@@ -4,6 +4,7 @@ const { Link, Rectangle, QuadTree }           = require('./js/quadtree')
 const { throttle, isEqual }                   = require('lodash')
 const { genId, isElementANavElement }         = require('./js/utils')
 const { markNavbars, passNavElementOnDwell }  = require('./js/navbar-pattern')
+const Config                                  = require('./js/config')
 
 var _browser_zoomLevel = 0
 var _browser_maxZoom = 9
@@ -48,6 +49,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseover', () => {
     c.style.visibility = 'visible'
+  })
+
+  // if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+  //   ipcRenderer.send('hideScrollDown')
+  // }
+  
+  if (!window.scrollUp) {
+    ipcRenderer.send('hideScrollUp')
+  }
+
+  document.addEventListener('scroll', () => {
+    if (!window.scrollY) {
+      ipcRenderer.send('hideScrollUp')
+    } else {
+      ipcRenderer.send('showScrollUp')
+      // ipcRenderer.send('showScrollDown')
+    }
   })
 
   instantiateQuadTree()
@@ -107,10 +125,12 @@ function markLinks() {
    if (isElementANavElement(anchors[i])) {
      continue
    }
+
    linkBounds = anchors[i].getBoundingClientRect()
    if (linkBounds.x === 0 && linkBounds.y === 0 && linkBounds.width === 0 && linkBounds.height === 0) {
      continue
    }
+
    if (!anchors[i].href ) {
      continue
    }
@@ -149,7 +169,7 @@ function populateQuadTree() {
 function getLinksFromQuadTree(cursorLocation) {
   let posX = window.scrollX + cursorLocation.x
   let posY = window.scrollY + cursorLocation.y
-  let range = new Rectangle(posX, posY, 200, 200)
+  let range = new Rectangle(posX, posY, Config.rangeWidth, Config.rangeHeight)
   let points = qTree.query(range)
 
   if (Array.isArray(points) && points.length) {
@@ -170,8 +190,3 @@ function getLinksFromQuadTree(cursorLocation) {
     ipcRenderer.send('getLinks', points)
   }
 }
-
-// function updateQuadTree() {
-//   qTree.links = []
-//   populateQuadTree()
-// }

@@ -2,6 +2,7 @@ const fs                        = require('fs')
 const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
 const { drop, isEqual }         = require('lodash')
+const Config                    = require('./js/config')
 
 var backOrForward, omni, webview
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav
@@ -98,6 +99,22 @@ scrollUpBtn = byId('scroll-up')
 scrollDownBtn = byId('scroll-down')
 webview.addEventListener('dom-ready', scroller())
 
+ipcRenderer.on('hideScrollUp', () => {
+  scrollUpBtn.style.display = 'none'
+})
+
+ipcRenderer.on('showScrollUp', () => {
+  scrollUpBtn.style.display = 'flex'
+})
+
+// ipcRenderer.on('hideScrollDown', () => {
+//   scrollDownBtn.style.display = 'none'
+// })
+
+// ipcRenderer.on('showScrollDown', () => {
+//   scrollDownBtn.style.display = 'flex'
+// })
+
 function scroller() {
   scrollUpBtn.onmouseover = () => {
     timeoutScroll = setInterval(() => {
@@ -184,124 +201,125 @@ dwell(forwardNavBtn, goForward)
 // ======== OMNIBOX OVERLAY ========
 // =================================
 
-var omnibox, overlayOmnibox, refreshOmniBtn, searchOmniBtn, bookmarkOmniBtn, viewBookmarksOmniBtn, cancelOmniBtn
-var overlaySearchBox, cancelSearchBtn, submitSearchBtn, inputSearchBox
 var bookmarksWebview
 
-omnibox = byId('omnibox')
+const overlayOmnibox = byId('overlay-omnibox')
+const refreshOmniBtn = byId('refreshPageBtn')
+const searchOmniBtn = byId('searchBtn')
+const bookmarkOmniBtn = byId('bookmarkPageBtn')
+const viewBookmarksOmniBtn = byId('showBookmarksBtn')
+const cancelOmniBtn = byId('cancel-omni')
+const omnibox = byId('omnibox')
+const cancelSearchBtn = byId('cancel-search')
+const submitSearchBtn = byId('submit-search')
+const overlaySearchBox = byId('overlay-search')
+const inputSearchBox = byId('searchText')
 
 dwell(omnibox, () => {
-  overlayOmnibox = byId('overlay-omnibox')
-  refreshOmniBtn = byId('refreshPageBtn')
-  searchOmniBtn = byId('searchBtn')
-  bookmarkOmniBtn = byId('bookmarkPageBtn')
-  viewBookmarksOmniBtn = byId('showBookmarksBtn')
-  cancelOmniBtn = byId('cancel-omni')
-
   hideAllOverlays()
   overlayOmnibox.style.display = 'grid'
+})
 
-  dwell(refreshOmniBtn, reload)
+dwell(cancelOmniBtn, () => {
+  overlayOmnibox.style.display = 'none'
+})
 
-  dwell(searchOmniBtn, () => {
-    cancelSearchBtn = byId('cancel-search')
-    submitSearchBtn = byId('submit-search')
-    hideAllOverlays()
-    overlaySearchBox = byId('overlay-search')
-    overlaySearchBox.style.display="grid"
-    inputSearchBox = byId('searchText')
-    inputSearchBox.focus();
+dwell(refreshOmniBtn, reload)
 
-    dwell(submitSearchBtn, () => {
-      hideAllOverlays()
-      inputSearchBox = byId('searchText')
-      overlaySearchBox.style.display="none"
-      webview.src = "https://www.google.com/search?q=" + inputSearchBox.value;
-    })
+dwell(searchOmniBtn, () => {
+  hideAllOverlays()
+  overlaySearchBox.style.display="grid"
+  inputSearchBox.focus();
+})
 
-    dwell(cancelSearchBtn, () => {
-      overlaySearchBox.style.display = 'none'
-    })
-  })
+dwell(submitSearchBtn, () => {
+  hideAllOverlays()
+  overlaySearchBox.style.display="none"
+  webview.src = "https://www.google.com/search?q=" + inputSearchBox.value;
+})
 
-  // BOOKMARKS 
-  dwell(bookmarkOmniBtn, () => {
-    fs.readFile('bookmarks.json', 'utf8', (err, data) => {
-      let bMarkName = webview.src.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
-      var bookmark = { url: webview.src, name:  bMarkName}
+dwell(cancelSearchBtn, () => {
+  overlaySearchBox.style.display = 'none'
+})
 
-      if (err) {
-        return err
-      } else {
-        var bookmarks = JSON.parse(data)
-        var exists = false;
+// BOOKMARKS 
+dwell(bookmarkOmniBtn, () => {
+  fs.readFile('bookmarks.json', 'utf8', (err, data) => {
+    let bMarkName = webview.src.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+    var bookmark = { url: webview.src, name:  bMarkName}
 
-        for(var i=0; bookmarks.bookmarks.length > i; i++) {
-          if (bookmarks.bookmarks[i].url === bookmark.url) {
-            exists = true;
-          }
-        }
+    if (err) {
+      return err
+    } else {
+      var bookmarks = JSON.parse(data)
+      var exists = false;
 
-        if (!exists) {
-          bookmarks.bookmarks.push(bookmark)
-          let bookmarksJson = JSON.stringify(bookmarks)
-          fs.writeFile('bookmarks.json', bookmarksJson, 'utf8', (err) => {
-            if (err) throw err
-          })
-          dialogMessage.innerHTML = 'Bookmark added succesfully!'
-          dialogErrorIcon.style.display = 'none'
-          dialogSuccessIcon.style.display = 'block'
-        } else {
-          dialogSuccessIcon.style.display = 'none'
-          dialogMessage.innerHTML = 'Bookmark already exists!'
-          dialogErrorIcon.style.display = 'block'
+      for(var i=0; bookmarks.bookmarks.length > i; i++) {
+        if (bookmarks.bookmarks[i].url === bookmark.url) {
+          exists = true;
         }
       }
-    })
 
-    hideAllOverlays()
-    dialog.style.display = 'flex'
-    setTimeout(() => {
-      dialog.classList.add('fadeOutDown')
-    }, 3000);
-
-    setTimeout(() => {
-      dialog.style.display = 'none'
-      dialog.classList.remove('fadeOutDown')
-    }, 3600);
+      if (!exists) {
+        bookmarks.bookmarks.push(bookmark)
+        let bookmarksJson = JSON.stringify(bookmarks)
+        fs.writeFile('bookmarks.json', bookmarksJson, 'utf8', (err) => {
+          if (err) throw err
+        })
+        dialogMessage.innerHTML = 'Bookmark added succesfully!'
+        dialogErrorIcon.style.display = 'none'
+        dialogSuccessIcon.style.display = 'block'
+      } else {
+        dialogSuccessIcon.style.display = 'none'
+        dialogMessage.innerHTML = 'Bookmark already exists!'
+        dialogErrorIcon.style.display = 'block'
+      }
+    }
   })
 
-  dwell(viewBookmarksOmniBtn, () => {
-    webviewContainer = byId('webview-container')
-    webviewContainer.insertAdjacentHTML('beforeend', `
-      <webview id="bookmarkview" class="webpage" src="./bookmarks.html" preload="./injectBookmark.js" autosize="on"></webview>
-    `)
-    hideAllOverlays()
-    bookmarksWebview = byId('bookmarkview')
+  hideAllOverlays()
+  dialog.style.display = 'flex'
+  setTimeout(() => {
+    dialog.classList.add('fadeOutDown')
+  }, 3000);
 
-    bookmarksWebview.addEventListener('dom-ready', () => {
-      bookmarksWebview.openDevTools()
-    })
+  setTimeout(() => {
+    dialog.style.display = 'none'
+    dialog.classList.remove('fadeOutDown')
+  }, 3600);
+})
 
-    webview.style.display = 'none';
-    bookmarksWebview.style.display = 'flex'
+dwell(viewBookmarksOmniBtn, () => {
+  webviewContainer = byId('webview-container')
+  webviewContainer.insertAdjacentHTML('beforeend', `
+    <webview id="bookmarkview" class="webpage" src="./bookmarks.html" preload="./injectBookmark.js" autosize="on"></webview>
+  `)
+  hideAllOverlays()
+  bookmarksWebview = byId('bookmarkview')
 
-    let bookmarksJson = fs.readFileSync('bookmarks.json', 'utf8')
+  // bookmarksWebview.addEventListener('dom-ready', () => {
+  //   bookmarksWebview.openDevTools()
+  // })
 
-    bookmarksWebview.addEventListener('dom-ready', () => {
-      bookmarksWebview.send('getBookmarks', bookmarksJson)
-    })
+  webview.style.display = 'none';
+  bookmarksWebview.style.display = 'flex'
 
-    ipcRenderer.on('loadBookmark', (event, message) => {
-      webview.style.display = 'flex'
-      bookmarksWebview.style.display = 'none'
-      webview.src = message
-    })
+  let bookmarksJson = fs.readFileSync('bookmarks.json', 'utf8')
+
+  bookmarksWebview.addEventListener('dom-ready', () => {
+    bookmarksWebview.send('getBookmarks', bookmarksJson)
   })
 
-  dwell(cancelOmniBtn, () => {
-    overlayOmnibox.style.display = 'none'
+  ipcRenderer.on('loadBookmark', (event, message) => {
+    webview.style.display = 'flex'
+    bookmarksWebview.style.display = 'none'
+    webview.src = message
   })
+})
+
+ipcRenderer.on('closeBookmarks', () => {
+  webview.style.display = 'flex'
+  bookmarksWebview.style.display = 'none'
 })
 
 // =================================
@@ -309,39 +327,35 @@ dwell(omnibox, () => {
 // =================================
 
 // ZOOMING
-var options, overlayOptions, cancelOptionsBtn
-var zoomInBtn, zoomOutBtn, resetZoomBtn
-
-options = byId('menuBtn')
+const overlayOptions = byId('overlay-options')
+const zoomInBtn = byId('zoomInBtn')
+const zoomOutBtn = byId('zoomOutBtn')
+const resetZoomBtn = byId('resetZoomBtn')
+const cancelOptionsBtn = byId('cancel-options')
+const options = byId('menuBtn')
 
 dwell(options, () => {
-  overlayOptions = byId('overlay-options')
-  zoomInBtn = byId('zoomInBtn')
-  zoomOutBtn = byId('zoomOutBtn')
-  resetZoomBtn = byId('resetZoomBtn')
-  cancelOptionsBtn = byId('cancel-options')
-
   hideAllOverlays()
   overlayOptions.style.display = 'grid'
+})
 
-  dwell(zoomInBtn, () => {
-    webview.send("zoomIn")
-    overlayOptions.style.display = 'none'
-  })
+dwell(zoomInBtn, () => {
+  webview.send("zoomIn")
+  overlayOptions.style.display = 'none'
+})
 
-  dwell(zoomOutBtn, () => {
-    webview.send("zoomOut")
-    overlayOptions.style.display = 'none'
-  })
+dwell(zoomOutBtn, () => {
+  webview.send("zoomOut")
+  overlayOptions.style.display = 'none'
+})
 
-  dwell(resetZoomBtn, () => {
-    webview.send("zoomReset")
-    overlayOptions.style.display = 'none'
-  })
+dwell(resetZoomBtn, () => {
+  webview.send("zoomReset")
+  overlayOptions.style.display = 'none'
+})
 
-  dwell(cancelOptionsBtn, () => {
-    overlayOptions.style.display = 'none'
-  })
+dwell(cancelOptionsBtn, () => {
+  overlayOptions.style.display = 'none'
 })
 
 webview.addEventListener('dom-ready', () => {
@@ -359,8 +373,8 @@ webview.addEventListener('dom-ready', () => {
 let allLinksReceived = []
 
 // const sidebarMaxLinks = Config.sidebarMaxLinks
-const lengthUrl = 30
-const lengthTitle = 20
+const lengthTitle = Config.sidebarLengthTitle
+const lengthUrl = Config.sidebarLengthUrl
 let sidebar = byId('sidebar_items')
 
 // ========================
@@ -368,7 +382,7 @@ let sidebar = byId('sidebar_items')
 // ========================
 
 ipcRenderer.on('getLinks', (event, message) => {
-  console.log(message)
+  // byId('sidebar_header_title').innerHTML = 'Links'
   allLinksReceived.push(...message)
   let linksInSidebar = []
   let linksToShow = []
@@ -416,7 +430,7 @@ ipcRenderer.on('getLinks', (event, message) => {
               ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
             </div>
             <div class='sidebar_item_link' data-link='${link.url}'>
-              ${link.url.length <= lengthUrl ? link.url : link.url.substring(0, lengthUrl)+'...'}
+              ${link.url.length <= lengthUrl ? link.url.replace(/^https?:\/\//i, "") : link.url.replace(/^https?:\/\//i, "").substring(0, lengthUrl)+'...'}
             </div>
           </div>
           <div class='sidebar_item_icon'>
@@ -455,6 +469,7 @@ ipcRenderer.on('getLinks', (event, message) => {
 ipcRenderer.on('getNavLinks', (event, message) => {
   let navArray = message
   let linksToShow = []
+  // byId('sidebar_header_title').innerHTML = 'Navigation'
   linksToShow = navArray.filter(link => link.parent === 1)
 
   renderLinks(linksToShow)
@@ -476,13 +491,13 @@ ipcRenderer.on('getNavLinks', (event, message) => {
     links = markLinksWithChildren(links)
 
     const markup = `${links.map(link =>
-      `<div class='sidebar_item' data-id='${link.id}'>
+      `<div class='sidebar_item' fadeInDown data-id='${link.id}'>
         <div>
           <div class='sidebar_item_title'>
             ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
           </div>
           <div class='sidebar_item_link' data-link='${link.href ? link.href : " No Link "}'>
-            ${link.href ? link.href : " No Link "}
+            ${link.href ? link.href.substring(0, lengthUrl) : " No Link "}
           </div>
         </div>
         <div class='sidebar_item_icon'>
@@ -502,9 +517,10 @@ ipcRenderer.on('getNavLinks', (event, message) => {
   }
 
   function emptySidebar() {
-    let sidebarItems = sidebar.querySelectorAll('.sidebar_item')
+    let sidebarItems = Array.from(sidebar.getElementsByClassName('sidebar_item'))
     if (sidebarItems.length) {
       for (var i=0; i < sidebarItems.length; i++) {
+        sidebarItems[i].classList.add('fadeOutDown')
         sidebarItems[i].parentNode.removeChild(sidebarItems[i])
       }
     }
