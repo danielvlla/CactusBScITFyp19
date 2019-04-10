@@ -10,6 +10,7 @@ var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon
 var timeoutScroll
 var webviewContainer
 
+
 omni = byId('url')
 webview = byId('webview')
 
@@ -297,9 +298,9 @@ dwell(viewBookmarksOmniBtn, () => {
   hideAllOverlays()
   bookmarksWebview = byId('bookmarkview')
 
-  // bookmarksWebview.addEventListener('dom-ready', () => {
-  //   bookmarksWebview.openDevTools()
-  // })
+  bookmarksWebview.addEventListener('dom-ready', () => {
+    bookmarksWebview.openDevTools()
+  })
 
   webview.style.display = 'none';
   bookmarksWebview.style.display = 'flex'
@@ -311,9 +312,9 @@ dwell(viewBookmarksOmniBtn, () => {
   })
 
   ipcRenderer.on('loadBookmark', (event, message) => {
+    webview.src = message
     webview.style.display = 'flex'
     bookmarksWebview.style.display = 'none'
-    webview.src = message
   })
 })
 

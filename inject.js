@@ -50,10 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('mouseover', () => {
     c.style.visibility = 'visible'
   })
-
-  // if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-  //   ipcRenderer.send('hideScrollDown')
-  // }
   
   if (!window.scrollUp) {
     ipcRenderer.send('hideScrollUp')
@@ -95,7 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let navElements = markNavbars()
   if (navElements) {
     for (var i=0; i < navElements.length; i++) {
-      navElements[i].addEventListener('mouseover', passNavElementOnDwell)
+      (function(i) {
+        navElements[i].addEventListener('mouseover', passNavElementOnDwell)
+      })(i)
     }
   }
 

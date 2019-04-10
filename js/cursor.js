@@ -25,6 +25,8 @@ exports.createCursor = (id) => {
   cursor.style.opacity = '0.3'
   cursor.style.zIndex = '1000'
   cursor.style.position = 'absolute'
+  cursor.style.margin = '-20px 0 0 -20px'
+  cursor.style['pointer-events'] = 'none'
 
   // if (!id.localeCompare('hiddenCursor')) {
   //   cursor.style.opacity = 0
