@@ -1,5 +1,4 @@
 const config = require('./config')
-const Timeout = require('smart-timeout')
 const { throttle } = require('lodash')
 
 let dwellTime = config.dwellTime;
@@ -52,22 +51,6 @@ module.exports = {
       throttledFunction.cancel()
     })
   },
-
-  // dwell: (elem, callback) => {
-  //   elem.onmouseover = () => {
-  //     worker.postMessage('startDwell')
-
-  //     worker.addEventListener('message', (e) => {
-  //       let data = e.data;
-  //       $('#tweet').html(data.tweet);
-  //       $('#user').html(' - ' + data.user);
-  //     });
-  //   }
-
-    // elem.onmouseout = () => {
-    //   Timeout.clear(callback)
-    // }
-  // },
 
   genId: () => {
     return '_' + Math.random().toString(36).substr(2, 9)
