@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var getLinksFromCursorRange =  throttle(() => {
     let cursorLoc = c.getBoundingClientRect()
     getLinksFromQuadTree(cursorLoc)
-  }, 2000, { 'leading': false })
+  }, Config.dwellTime, { 'leading': false })
 
   document.addEventListener('mousemove', getLinksFromCursorRange)
 

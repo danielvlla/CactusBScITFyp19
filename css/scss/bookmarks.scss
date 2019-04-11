@@ -8,6 +8,16 @@ body {
   font-family: 'Roboto', sans-serif;
   color: $black;
   background-color: $offwhite;
+  cursor: none;
+  user-select: none;
+}
+
+a, input, button, div {
+  cursor: none;
+}
+
+#cursor {
+  font-size: 2em;
 }
 
 #bookmarks {
@@ -35,15 +45,16 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    margin-left: 30px;
-
+    margin-left: 50px;
+    
     .bookmark {
       &Box {
         @extend .dwellBtn;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        width: 150px;
+        width: 200px;
+        height: 120px;
         margin-right: 30px;
         margin-bottom: 30px;
         padding: 20px;
@@ -90,7 +101,7 @@ body {
     font-size: 1em;
     padding: 30px;
     margin-top: 50px;
-    margin-left: 30px;
+    margin-left: 50px;
 
     svg {
       margin-right: 15px;

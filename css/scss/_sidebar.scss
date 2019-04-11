@@ -34,6 +34,7 @@
 
   &_items {
     width: 100%;
+    overflow-y: auto;
   }
 }
 
@@ -43,13 +44,17 @@
     display: grid;
     grid-template-columns: 80% auto;
     // height: 50px;
-    width: 80%;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    margin: 20px 10px;
+    width: 95%;
+    padding: 15px 10px;
+    // margin: 20px 10px;
     flex-direction: column;
     align-content: center;
+    box-sizing: border-box;
+    border-color: $white;
+    border-style: solid;
+    border-width: 15px;
+    border-radius: 25px;
+    margin-bottom: 10px;
 
     &_title {
       font-size: 0.7em;

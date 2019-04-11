@@ -10,6 +10,7 @@ body {
   height: 100%;
   display: block;
   font-family: 'Roboto', sans-serif;
+  cursor: none;
 }
 
 ::placeholder {
@@ -34,4 +35,8 @@ body {
 
 #bookmarkView {
   display: none;
+}
+
+#cursor {
+  font-size: 2em;
 }

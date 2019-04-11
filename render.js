@@ -3,6 +3,7 @@ const { ipcRenderer }           = require('electron')
 const { byId, readFile, dwell } = require('./js/utils')
 const { drop, isEqual }         = require('lodash')
 const Config                    = require('./js/config')
+const { createCursor, followCursor } = require('./js/cursor')
 
 var backOrForward, omni, webview
 var cancelNavBtn, backNavBtn, forwardNavBtn, overlayNav
@@ -10,12 +11,25 @@ var dialog, dialogMessage, dialogErrorIcon, dialogSuccessIcon
 var timeoutScroll
 var webviewContainer
 
-
 omni = byId('url')
 webview = byId('webview')
 
+let cursor 
+
 webview.addEventListener('dom-ready', () => {
-  webview.openDevTools()
+  // webview.openDevTools()
+  createCursor('cursor')
+  cursor = document.getElementById('cursor')
+  followCursor('cursor')
+
+  webview.addEventListener('mouseover', () => {
+    cursor.style.visibility = 'hidden'
+  })
+
+  webview.addEventListener('mouseout', () => {
+    cursor.style.visibility = 'visible'
+  })
+
 })
 
 dialog = byId('dialog')
@@ -298,8 +312,16 @@ dwell(viewBookmarksOmniBtn, () => {
   hideAllOverlays()
   bookmarksWebview = byId('bookmarkview')
 
+  bookmarksWebview.addEventListener('mouseover', () => {
+    cursor.style.visibility = 'hidden'
+  })
+
+  bookmarksWebview.addEventListener('mouseout', () => {
+    cursor.style.visibility = 'visible'
+  })
+
   bookmarksWebview.addEventListener('dom-ready', () => {
-    bookmarksWebview.openDevTools()
+    // bookmarksWebview.openDevTools()
   })
 
   webview.style.display = 'none';
@@ -467,11 +489,47 @@ ipcRenderer.on('getLinks', (event, message) => {
 // NAVBAR NAVIGATION
 // ========================
 
+let allNavItemsReceived = []
+
 ipcRenderer.on('getNavLinks', (event, message) => {
+  allNavItemsReceived.push(...message)
   let navArray = message
   let linksToShow = []
-  // byId('sidebar_header_title').innerHTML = 'Navigation'
+  // let linksInSidebar = []
+  // let numberOfLinksToDelete = 0
   linksToShow = navArray.filter(link => link.parent === 1)
+
+  // var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
+  // if (sidebarItems.length) {
+  //   let sidebarItemIds = sidebarItems.map(item => `${item.getAttribute('data-id')}`)
+  //   for (var i=0; i < sidebarItemIds.length; i++) {
+  //     var sidebarItem = allLinksReceived.find(item => item.id === sidebarItemIds[i])
+  //     if (sidebarItem) {
+  //       linksInSidebar.push(sidebarItem)
+  //     }
+  //   }
+  // }
+
+  // if (!linksInSidebar.length) {
+  //   linksToShow = navArray.filter(link => link.parent === 1)
+  // } else if (isEqual(linksInSidebar, message)) {
+  //   linksToShow = []
+  // } else {
+  //   numberOfLinksToDelete = linksInSidebar.length
+  //   linksToShow = navArray.filter(link => link.parent === 1)
+  // }
+
+  // if (numberOfLinksToDelete && sidebarItems.length) {
+  //   for (i=0; i < numberOfLinksToDelete; i++) {
+  //     sidebarItems[i].classList.add('fadeOutDown')
+  //     let iter = i
+  //     sidebarItems[i].addEventListener('webkitAnimationEnd', () => {
+  //       sidebarItems[iter].parentNode.removeChild(sidebarItems[iter])
+  //       drop(linksInSidebar, numberOfLinksToDelete)
+  //       renderLinks(linksToShow)
+  //     })
+  //   }
+  // }
 
   renderLinks(linksToShow)
 
@@ -492,7 +550,7 @@ ipcRenderer.on('getNavLinks', (event, message) => {
     links = markLinksWithChildren(links)
 
     const markup = `${links.map(link =>
-      `<div class='sidebar_item' fadeInDown data-id='${link.id}'>
+      `<div class='sidebar_item fadeInDown' data-id='${link.id}'>
         <div>
           <div class='sidebar_item_title'>
             ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}

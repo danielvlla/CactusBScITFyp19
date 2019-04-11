@@ -65,11 +65,3 @@ ipcMain.on('hideScrollUp', () => {
 ipcMain.on('showScrollUp', () => {
   mainWindow.webContents.send('showScrollUp')
 })
-
-// ipcMain.on('hideScrollDown', () => {
-//   mainWindow.webContents.send('hideScrollDown')
-// })
-
-// ipcMain.on('showScrollDown', () => {
-//   mainWindow.webContents.send('showScrollDown')
-// })

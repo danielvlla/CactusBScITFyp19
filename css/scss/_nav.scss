@@ -13,6 +13,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 19%;
 
     #backBtn {
       margin-right: 10px;
@@ -28,6 +29,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 19%;
   }
 
   #omnibox  {
@@ -38,9 +40,10 @@
     align-items: center;
     color: $blue-2;
     background-color: $blue-light;
-    margin: 15px;
-    border-radius: 10px;
-    cursor: pointer;
+    box-sizing: border-box;
+    border: 15px solid $white;    
+    border-radius: 20px;
+    // cursor: pointer;
     transition: $dwellTime;
     outline: none;
     overflow: hidden;
@@ -55,7 +58,7 @@
       font-size: 18px;
       color: $blue-2;
       background-color : $blue-light;
-      cursor: pointer;
+      // cursor: pointer;
       transition: $dwellTime;
     }
 

@@ -1,17 +1,22 @@
 const { ipcRenderer }               = require('electron')
 const { byId, dwell }               = require('./js/utils')
-const { throttle }                  = require('lodash')
-const Config                        = require('./js/config')
+const { createCursor, followCursor } = require('./js/cursor')
 
-// const { createCursor, followCursor } = require('./js/cursor.js')
+let c
 
-// let c 
+document.addEventListener('DOMContentLoaded', () => {
+  createCursor('cursor')
+  c = document.getElementById('cursor')
+  followCursor('cursor')
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   createCursor('cursor')
-//   c = document.getElementById('cursor')
-//   followCursor('cursor')
-// })
+  document.addEventListener('mouseout', () => {
+    c.style.visibility = 'hidden'
+  })
+
+  document.addEventListener('mouseover', () => {
+    c.style.visibility = 'visible'
+  })
+})
 
 ipcRenderer.on('getBookmarks', (event, message) => {
   let bookmarksJson = JSON.parse(message)
