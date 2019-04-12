@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------- END NAVBAR NAVIGATION PATTERN
-
 })
 
 function instantiateQuadTree() {

@@ -57,6 +57,12 @@ var buildNavArray = function(element) {
       for (var i=0; i < listItemsOfRoot.length; i++) {
         addItemToNavArray(listItemsOfRoot[i], root.id)
       }
+
+      // if (listItemsOfRoot.length === 1 && listItemsOfRoot.tagName == "UL") {
+      //   let listItemsOfUlUnderRoot = listItemsOfRoot[0].children
+      //   addItemToNavArray(listItemsOfUlUnderRoot, root.id)
+      // } else {
+      // }
     }
   }
 }
@@ -92,6 +98,7 @@ function addItemToNavArray(listElement, parentId) {
     }
   }
 
+  title = title.replace('menu item level', '')
   let n = new navItem(id, title, href, parent)
 
   if (n.title.trim() || n.href.trim()) {

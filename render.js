@@ -550,7 +550,7 @@ ipcRenderer.on('getNavLinks', (event, message) => {
     links = markLinksWithChildren(links)
 
     const markup = `${links.map(link =>
-      `<div class='sidebar_item fadeInDown' data-id='${link.id}'>
+      `<div class='sidebar_item' data-id='${link.id}'>
         <div>
           <div class='sidebar_item_title'>
             ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}

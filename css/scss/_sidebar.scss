@@ -44,17 +44,15 @@
     display: grid;
     grid-template-columns: 80% auto;
     // height: 50px;
-    width: 95%;
+    width: 90%;
     padding: 15px 10px;
     // margin: 20px 10px;
     flex-direction: column;
     align-content: center;
     box-sizing: border-box;
-    border-color: $white;
-    border-style: solid;
-    border-width: 15px;
-    border-radius: 25px;
-    margin-bottom: 10px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px 10px 15px 10px;
 
     &_title {
       font-size: 0.7em;
