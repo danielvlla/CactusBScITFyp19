@@ -468,7 +468,12 @@ ipcRenderer.on('getLinks', (event, message) => {
       sidebarItems = document.querySelectorAll('.sidebar_item')
       if (sidebarItems.length) {
         for (i=0; i < sidebarItems.length; i++) {
-          sidebarItems[i].addEventListener('mouseover', getLink)
+          (function(i) {
+            dwell(sidebarItems[i], () => {
+              webview.src = sidebarItems[i].firstElementChild.lastElementChild.getAttribute('data-link')
+            })
+          })(i)
+          // sidebarItems[i].addEventListener('mouseover', getLink)
         }
       }
     }
@@ -478,11 +483,11 @@ ipcRenderer.on('getLinks', (event, message) => {
     displayHyperlinks()
   }
 
-  function getLink() {
-    dwell(this, () => {
-      webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
-    })
-  }
+  // function getLink() {
+  //   dwell(this, () => {
+  //     webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
+  //   })
+  // }
 })
 
 // ========================
@@ -550,7 +555,7 @@ ipcRenderer.on('getNavLinks', (event, message) => {
     links = markLinksWithChildren(links)
 
     const markup = `${links.map(link =>
-      `<div class='sidebar_item' data-id='${link.id}'>
+      `<div class='sidebar_item fadeInDown' data-id='${link.id}'>
         <div>
           <div class='sidebar_item_title'>
             ${link.title.length <= lengthTitle ? link.title : link.title.substring(0, lengthTitle)+'...'}
@@ -570,7 +575,17 @@ ipcRenderer.on('getNavLinks', (event, message) => {
     let sidebarItems = document.querySelectorAll('.sidebar_item')
     if (sidebarItems.length) {
       for (var i=0; i < sidebarItems.length; i++) {
-        sidebarItems[i].addEventListener('mouseover', loadLink)
+        (function(i) {
+          dwell(sidebarItems[i], () => {
+            let linkId = parseInt(sidebarItems[i].getAttribute('data-id'))
+            linksToShow = navArray.filter(link => link.parent === linkId)
+            renderLinks(linksToShow)
+            if (!linksToShow.length) {
+              webview.src = sidebarItems[i].firstElementChild.lastElementChild.getAttribute('data-link')
+            }
+          })
+        })(i)
+        // sidebarItems[i].addEventListener('mouseover', loadLink)
       }
     }
   }
