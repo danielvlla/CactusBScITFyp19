@@ -29,15 +29,6 @@ class Rectangle {
       link.x < this.x + this.width/2 &&
       link.y > this.y - this.height/2 &&
       link.y < this.y +this.height/2)
-
-    // return (link.x + link.width > this.x - this.width/2 &&
-    //   link.x + link.width < this.x + this.width/2 &&
-    //   link.x > this.x - this.width/2 &&
-    //   link.x < this.x + this.width/2 &&
-    //   link.y + link.height > this.y - this.height/2 &&
-    //   link.y + link.height < this.y +this.height/2 && 
-    //   link.y > this.y - this.height/2 &&
-    //   link.y < this.y +this.height/2)
   }
 
   intersects(range) {

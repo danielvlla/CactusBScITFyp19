@@ -57,12 +57,6 @@ var buildNavArray = function(element) {
       for (var i=0; i < listItemsOfRoot.length; i++) {
         addItemToNavArray(listItemsOfRoot[i], root.id)
       }
-
-      // if (listItemsOfRoot.length === 1 && listItemsOfRoot.tagName == "UL") {
-      //   let listItemsOfUlUnderRoot = listItemsOfRoot[0].children
-      //   addItemToNavArray(listItemsOfUlUnderRoot, root.id)
-      // } else {
-      // }
     }
   }
 }
@@ -89,11 +83,18 @@ function addItemToNavArray(listElement, parentId) {
 
   let ulTags = Array.from(listElement.getElementsByTagName('ul')) || Array.from(listElement.getElementsByTagName('ol'))
   if(ulTags.length) {
-    for (var i=0; i < ulTags.length; i++) {
-      let nestedListItems = ulTags[i].children
-      let ulId = addItemToNavArray(ulTags[i], id)
+    if (ulTags.length === 1) {
+      let nestedListItems = ulTags[0].children
       for (var j=0; j < nestedListItems.length; j++) {
-        addItemToNavArray(nestedListItems[j], ulId)
+        addItemToNavArray(nestedListItems[j], id)
+      }
+    } else {
+      for (var i=0; i < ulTags.length; i++) {
+        let nestedListItems = ulTags[i].children
+        let ulId = addItemToNavArray(ulTags[i], id)
+        for (var j=0; j < nestedListItems.length; j++) {
+          addItemToNavArray(nestedListItems[j], ulId)
+        }
       }
     }
   }
