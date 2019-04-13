@@ -2,6 +2,15 @@
   display: block;
 }
 
+.blur {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 200;
+  background-color: black;
+  opacity: 0.5;
+}
+
 .hidden {
   display: none;
 }
@@ -82,5 +91,15 @@
 
   40%, 60% {
     transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

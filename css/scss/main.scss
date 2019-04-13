@@ -33,6 +33,18 @@ body {
   height: calc(100vh - #{$navHeight});
 }
 
+.darken:after {
+  content: '';
+  background-color: $darkengrey;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  animation-duration: 0.4s;
+  animation-fill-mode: both;
+  opacity: 0;
+  animation-name: fadeIn;
+}
+
 #bookmarkView {
   display: none;
 }

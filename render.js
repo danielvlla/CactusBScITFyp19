@@ -500,56 +500,12 @@ let allNavItemsReceived = []
 
 ipcRenderer.on('getNavLinks', (event, message) => {
   allNavItemsReceived.push(...message)
+  webview.classList.add('darken')
   let navArray = message
   let linksToShow = []
-  // let linksInSidebar = []
-  // let numberOfLinksToDelete = 0
   linksToShow = navArray.filter(link => link.parent === 1)
 
-  // var sidebarItems = Array.from(document.getElementsByClassName('sidebar_item'))
-  // if (sidebarItems.length) {
-  //   let sidebarItemIds = sidebarItems.map(item => `${item.getAttribute('data-id')}`)
-  //   for (var i=0; i < sidebarItemIds.length; i++) {
-  //     var sidebarItem = allLinksReceived.find(item => item.id === sidebarItemIds[i])
-  //     if (sidebarItem) {
-  //       linksInSidebar.push(sidebarItem)
-  //     }
-  //   }
-  // }
-
-  // if (!linksInSidebar.length) {
-  //   linksToShow = navArray.filter(link => link.parent === 1)
-  // } else if (isEqual(linksInSidebar, message)) {
-  //   linksToShow = []
-  // } else {
-  //   numberOfLinksToDelete = linksInSidebar.length
-  //   linksToShow = navArray.filter(link => link.parent === 1)
-  // }
-
-  // if (numberOfLinksToDelete && sidebarItems.length) {
-  //   for (i=0; i < numberOfLinksToDelete; i++) {
-  //     sidebarItems[i].classList.add('fadeOutDown')
-  //     let iter = i
-  //     sidebarItems[i].addEventListener('webkitAnimationEnd', () => {
-  //       sidebarItems[iter].parentNode.removeChild(sidebarItems[iter])
-  //       drop(linksInSidebar, numberOfLinksToDelete)
-  //       renderLinks(linksToShow)
-  //     })
-  //   }
-  // }
-
   renderLinks(linksToShow)
-
-  // function loadLink() {
-  //   dwell(this, () => {
-  //     let linkId = parseInt(this.getAttribute('data-id'))
-  //     linksToShow = navArray.filter(link => link.parent === linkId)
-  //     renderLinks(linksToShow)
-  //     if (!linksToShow.length) {
-  //       webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
-  //     }
-  //   })
-  // }
 
   function renderLinks(links) {
     emptySidebar()
@@ -584,6 +540,7 @@ ipcRenderer.on('getNavLinks', (event, message) => {
             renderLinks(linksToShow)
             if (!linksToShow.length) {
               webview.src = sidebarItems[i].firstElementChild.lastElementChild.getAttribute('data-link')
+              webview.classList.remove('darken')
             }
           })
         })(i)
