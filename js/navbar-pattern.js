@@ -77,6 +77,7 @@ function addItemToNavArray(listElement, parentId) {
     anchor = listElement.querySelector('a')
   }
 
+
   if (anchor) {
     href = anchor.href
   }
@@ -99,7 +100,10 @@ function addItemToNavArray(listElement, parentId) {
     }
   }
 
-  title = title.replace('menu item level', '')
+  // Edge cases for hsbc/barclays tests
+  title = title.split('menu item level')[0]
+  title = title.split('Press enter')[0]
+
   let n = new navItem(id, title, href, parent)
 
   if (n.title.trim() || n.href.trim()) {
