@@ -17,7 +17,7 @@ webview = byId('webview')
 let cursor 
 
 webview.addEventListener('dom-ready', () => {
-  // webview.openDevTools()
+  webview.openDevTools()
   createCursor('cursor')
   cursor = document.getElementById('cursor')
   followCursor('cursor')
@@ -337,12 +337,14 @@ dwell(viewBookmarksOmniBtn, () => {
     webview.src = message
     webview.style.display = 'flex'
     bookmarksWebview.style.display = 'none'
+    document.getElementById("bookmarkview").remove();
   })
 })
 
 ipcRenderer.on('closeBookmarks', () => {
   webview.style.display = 'flex'
   bookmarksWebview.style.display = 'none'
+  document.getElementById("bookmarkview").remove();
 })
 
 // =================================
@@ -538,16 +540,16 @@ ipcRenderer.on('getNavLinks', (event, message) => {
 
   renderLinks(linksToShow)
 
-  function loadLink() {
-    dwell(this, () => {
-      let linkId = parseInt(this.getAttribute('data-id'))
-      linksToShow = navArray.filter(link => link.parent === linkId)
-      renderLinks(linksToShow)
-      if (!linksToShow.length) {
-        webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
-      }
-    })
-  }
+  // function loadLink() {
+  //   dwell(this, () => {
+  //     let linkId = parseInt(this.getAttribute('data-id'))
+  //     linksToShow = navArray.filter(link => link.parent === linkId)
+  //     renderLinks(linksToShow)
+  //     if (!linksToShow.length) {
+  //       webview.src = this.firstElementChild.lastElementChild.getAttribute('data-link')
+  //     }
+  //   })
+  // }
 
   function renderLinks(links) {
     emptySidebar()

@@ -41,6 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Instantiate Cursor
   createCursor('cursor')
   c = document.getElementById('cursor')
+  // c.style['border-color'] = 'red'
+  // c.style['border-left'] = `${Config.rangeWidth/2}px`
+  // c.style['border-right'] = `${Config.rangeWidth/2}px`
+  // c.style['border-top'] = `${Config.rangeHeight/2}px`
+  // c.style['border-bottom'] = `${Config.rangeHeight/2}px`
+  // c.style['border-style'] = 'solid'
   followCursor('cursor')
 
   document.addEventListener('mouseout', () => {
