@@ -1,5 +1,5 @@
 {
-  "name": "eyebrowse",
+  "name": "Cactus",
   "version": "1.0.0",
   "description": "Gaze Interaction Browser",
   "main": "main.js",
@@ -10,7 +10,8 @@
   "author": "Daniel Vella",
   "license": "ISC",
   "build": {
-    "appId": "eyebrowse",
+    "appId": "cactus",
+    "asar": false,
     "dmg": {
       "contents": [
         {
@@ -47,7 +48,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
-    "path": "^0.12.7",
-    "worker-timers": "^5.0.15"
+    "original-fs": "^1.0.0",
+    "path": "^0.12.7"
   }
 }

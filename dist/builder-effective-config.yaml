@@ -1,0 +1,21 @@
+directories:
+  output: dist
+  buildResources: build
+appId: cactus
+asar: false
+dmg:
+  contents:
+    - x: 110
+      'y': 150
+    - x: 240
+      'y': 150
+      type: link
+      path: /Applications
+linux:
+  target:
+    - AppImage
+    - deb
+win:
+  target: squirrel
+  icon: build/icon.ico
+electronVersion: 4.1.2

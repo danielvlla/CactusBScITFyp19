@@ -1,0 +1,13 @@
+{
+  "name": "Cactus",
+  "version": "1.0.0",
+  "description": "Gaze Interaction Browser",
+  "main": "main.js",
+  "author": "Daniel Vella",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "original-fs": "^1.0.0",
+    "path": "^0.12.7"
+  }
+}
